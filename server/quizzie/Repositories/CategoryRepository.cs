@@ -22,7 +22,8 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<Category> GetById(Guid id)
     {
-        return await _context.QuizCategories.FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.QuizCategories.Include(x => x.Quizzes).FirstOrDefaultAsync(x => x.Id == id);
+
     }
 
     public async Task<Category> GetByTitle(string title)
