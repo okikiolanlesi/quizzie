@@ -7,7 +7,6 @@ namespace Quizzie.Models
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastUpdatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsCorrect { get; set; }
         //Navigation properties
         public Option Option { get; set; }
         public Guid OptionId { get; set; }
