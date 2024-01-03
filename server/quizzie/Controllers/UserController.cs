@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Quizzie.DTOs;
 
-namespace Quizzie;
+namespace Quizzie.Controllers;
 
 [ApiController]
 [Route("api/user")]
