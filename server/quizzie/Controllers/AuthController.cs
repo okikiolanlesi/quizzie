@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
         {
             return BadRequest(new
             {
-                message = "User already exists"
+                message = "User already exists",
             });
         }
 
@@ -86,7 +86,7 @@ public class AuthController : ControllerBase
         return Ok(new
         {
             message = "User registered successfully",
-            user,
+            user = _mapper.Map<UserDto>(user),
             token
         });
     }

@@ -12,6 +12,6 @@ public class RegisterRequestValidator : AbstractValidator<RegisterDto>
         RuleFor(x => x.LastName).NotEmpty();
         RuleFor(x => x.Password).NotEmpty();
         RuleFor(x => x.ConfirmPassword).NotEmpty();
-        RuleFor(x => x.Email).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
     }
 }
