@@ -64,13 +64,5 @@ public class CategoryController : ControllerBase
 
         return Ok(category);
     }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var AllCategory = await _categoryRepository.GetAll();
-
-        return Ok(AllCategory);
-
-    }
+   
 }

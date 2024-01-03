@@ -21,11 +21,6 @@ public class CategoryRepository : ICategoryRepository
         _context.QuizCategories.Add(category);
     }
 
-    public async Task<List<Category>> GetAll()
-    {
-       return await _context.QuizCategories.ToListAsync();
-    }
-
     public async Task<Category> GetById(Guid id)
     {
         return await _context.QuizCategories.Include(x => x.Quizzes).FirstOrDefaultAsync(x => x.Id == id);
