@@ -58,6 +58,20 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var category = await _categoryRepository.GetById(id);
+        if (category == null)
+        {
+            return NotFound();
+        }
+
         return Ok(category);
+    }
+    [HttpGet]
+    [Authorize(Roles ="Admin")]
+    public async Task<IActionResult> GetAll()
+    {
+        var AllCategory = await _categoryRepository.GetAll();
+
+        return Ok(AllCategory);
+
     }
 }

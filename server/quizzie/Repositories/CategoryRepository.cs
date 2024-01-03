@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Quizzie.Data;
@@ -24,6 +25,10 @@ public class CategoryRepository : ICategoryRepository
     {
         return await _context.QuizCategories.Include(x => x.Quizzes).FirstOrDefaultAsync(x => x.Id == id);
 
+    }
+    public async Task<List<Category>> GetAll()
+    {
+        return await _context.QuizCategories.ToListAsync();
     }
 
     public async Task<Category> GetByTitle(string title)
