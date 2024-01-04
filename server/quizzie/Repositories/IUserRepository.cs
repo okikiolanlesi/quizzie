@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Quizzie.Models;
 
-namespace Quizzie;
+namespace Quizzie.Repositories;
 
 public interface IUserRepository
 {

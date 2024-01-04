@@ -3,10 +3,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using quizzie;
-using Quizzie.Data;
 using Quizzie.DTOs;
 using Quizzie.Models;
+using Quizzie.Repositories;
 
 namespace Quizzie.Controllers;
 
@@ -24,7 +23,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> CreateCategory([FromBody] CategoryDto categoryDto)
     {
         var existingCategory = await _categoryRepository.GetByTitle(categoryDto.Title);
@@ -45,15 +44,11 @@ public class CategoryController : ControllerBase
 
         if (!result) return Problem(title: "Something went wrong");
 
-        return Ok(new
-        {
-            message = "Category created successfully",
-            category
-        });
+        return CreatedAtAction(nameof(GetById), new { category.Id }, category);
     }
 
     [HttpGet("{id:Guid}")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
 
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
