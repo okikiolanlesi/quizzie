@@ -12,7 +12,7 @@ namespace Quizzie.RequestHelpers
             CreateMap<RegisterDto, User>();
             CreateMap<User, UserDto>()
                  .ReverseMap();
-            CreateMap<CategoryDto, Category>().ReverseMap();
+            CreateMap<CreateOrUpdateCategoryDto, Category>().ReverseMap();
             CreateMap<QuizDto, Quiz>().ReverseMap();
             CreateMap<Quiz, UserQuizDetailDto>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
@@ -28,8 +28,12 @@ namespace Quizzie.RequestHelpers
                 .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
+            CreateMap<Category, CategoryDto>()
+                .ForMember(dest => dest.Quizzes, opt => opt.MapFrom(src => src.Quizzes));
+
 
             CreateMap<Category, QuizCategoryDto>();
+            CreateMap<Quiz, CategoryQuiz>();
             CreateMap<Question, QuestionDto>()
                 .ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Options));
 
