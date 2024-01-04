@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Quizzie.Data;
+using Quizzie.DTOs;
 using Quizzie.Models;
 
 namespace Quizzie.Repositories;
@@ -10,10 +13,12 @@ namespace Quizzie.Repositories;
 public class CategoryRepository : ICategoryRepository
 {
     private readonly QuizzieDbContext _context;
+    private readonly IMapper _mapper;
 
-    public CategoryRepository(QuizzieDbContext context)
+    public CategoryRepository(QuizzieDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public void Add(Category category)
@@ -21,10 +26,9 @@ public class CategoryRepository : ICategoryRepository
         _context.QuizCategories.Add(category);
     }
 
-    public async Task<Category> GetById(Guid id)
+    public async Task<CategoryDto> GetById(Guid id)
     {
-        return await _context.QuizCategories.Include(x => x.Quizzes).FirstOrDefaultAsync(x => x.Id == id);
-
+        return await _context.QuizCategories.Include(x => x.Quizzes).ProjectTo<CategoryDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(x => x.Id == id);
     }
     public async Task<List<Category>> GetAll()
     {

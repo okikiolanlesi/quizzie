@@ -24,7 +24,7 @@ public class CategoryController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult> CreateCategory([FromBody] CategoryDto categoryDto)
+    public async Task<ActionResult> CreateCategory([FromBody] CreateOrUpdateCategoryDto categoryDto)
     {
         var existingCategory = await _categoryRepository.GetByTitle(categoryDto.Title);
 
@@ -48,8 +48,6 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet("{id:Guid}")]
-    [Authorize(Roles = "Admin")]
-
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
         var category = await _categoryRepository.GetById(id);
@@ -60,8 +58,8 @@ public class CategoryController : ControllerBase
 
         return Ok(category);
     }
+
     [HttpGet]
-    [Authorize(Roles ="Admin")]
     public async Task<IActionResult> GetAll()
     {
         var AllCategory = await _categoryRepository.GetAll();

@@ -4,7 +4,7 @@ using Quizzie.DTOs;
 
 namespace Quizzie.Validators;
 
-public class CategoryRequestValidator : AbstractValidator<CategoryDto>
+public class CategoryRequestValidator : AbstractValidator<CreateOrUpdateCategoryDto>
 {
     public CategoryRequestValidator()
     {
