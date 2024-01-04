@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Quizzie.Models;
 
-namespace quizzie;
+namespace Quizzie.Repositories;
 
 public interface ICategoryRepository
 {
