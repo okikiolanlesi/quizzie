@@ -24,7 +24,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> CreateCategory([FromBody] CategoryDto categoryDto)
     {
         var existingCategory = await _categoryRepository.GetByTitle(categoryDto.Title);
@@ -53,7 +53,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet("{id:Guid}")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
 
     public async Task<IActionResult> GetById([FromRoute] Guid id)
     {
@@ -66,7 +66,7 @@ public class CategoryController : ControllerBase
         return Ok(category);
     }
     [HttpGet]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAll()
     {
         var AllCategory = await _categoryRepository.GetAll();
@@ -77,7 +77,7 @@ public class CategoryController : ControllerBase
 
     [HttpPut]
     [Route("{id:Guid}")]
-   [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
 
     public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] CategoryDto categoryDto)
     {
@@ -87,11 +87,11 @@ public class CategoryController : ControllerBase
             Description = categoryDto.Description,
         };
         existingCategory = await _categoryRepository.UpdateCategory(id, existingCategory);
-        if (existingCategory == null) 
+        if (existingCategory == null)
         {
             return NotFound();
         }
-       await _categoryRepository.SaveChangesAsync();
+        await _categoryRepository.SaveChangesAsync();
 
         var _categoryDto = new CategoryDto
         {
@@ -99,6 +99,27 @@ public class CategoryController : ControllerBase
             Description = existingCategory.Description
         };
         return Ok(_categoryDto);
+    }
+
+    [HttpDelete]
+    [Route("{id:Guid}")]
+    [Authorize(Roles ="Admin")]
+    public async Task <IActionResult> Delete([FromRoute]Guid id) 
+    {
+        var existingCategory = await _categoryRepository.DeleteById(id);
+        if (existingCategory == null)
+        {
+            return NotFound();
+        }
+        await _categoryRepository.SaveChangesAsync();
+        var _categoryDto = new CategoryDto
+        {
+            Title = existingCategory.Title,
+            Description = existingCategory.Description
+        };
+        return Ok(_categoryDto);
+        
+
 
     }
 }

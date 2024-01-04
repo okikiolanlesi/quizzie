@@ -11,6 +11,7 @@ public interface ICategoryRepository
     Task<Category> GetById(Guid id);
     Task<List<Category>> GetAll();
     Task<Category> UpdateCategory( Guid id, Category category);
+    Task<Category> DeleteById(Guid id);
 
 
 

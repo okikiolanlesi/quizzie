@@ -53,4 +53,16 @@ public class CategoryRepository : ICategoryRepository
         await _context.SaveChangesAsync();
         return existingCategory;
     }
+
+    public async Task<Category> DeleteById(Guid id)
+    {
+       var existingRegion =  await _context.QuizCategories.FirstOrDefaultAsync(x => x.Id == id);
+        if(existingRegion == null)
+        {
+            return null;
+        }
+        _context.QuizCategories.Remove(existingRegion);
+        await _context.SaveChangesAsync();
+        return existingRegion;
+    }
 }
