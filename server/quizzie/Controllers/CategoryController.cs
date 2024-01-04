@@ -67,4 +67,26 @@ public class CategoryController : ControllerBase
         return Ok(AllCategory);
 
     }
+
+    [HttpPut]
+    [Route("{id:Guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] CreateOrUpdateCategoryDto categoryDto)
+    {
+        var category = await _categoryRepository.GetById(id);
+        if (category == null)
+        {
+            return NotFound();
+        }
+
+        category.Title = categoryDto.Title;
+        category.Description = categoryDto.Description;
+
+        _categoryRepository.MarkAsModified(_mapper.Map<Category>(category));
+
+        await _categoryRepository.SaveChangesAsync();
+
+        return Ok(category);
+
+    }
 }

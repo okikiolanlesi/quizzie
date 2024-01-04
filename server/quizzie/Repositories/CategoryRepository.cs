@@ -44,4 +44,8 @@ public class CategoryRepository : ICategoryRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    public void MarkAsModified(Category category)
+    {
+        _context.Entry(category).State = EntityState.Modified;
+    }
 }
