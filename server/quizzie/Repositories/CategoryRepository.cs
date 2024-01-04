@@ -40,4 +40,17 @@ public class CategoryRepository : ICategoryRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<Category> UpdateCategory(Guid id, Category category)
+    {
+        var existingCategory= await _context.QuizCategories.FirstOrDefaultAsync(x=>x.Id == id);
+        if (existingCategory == null)
+        {
+            return null;
+        }
+        existingCategory.Title = category.Title;
+        existingCategory.Description = category.Description;
+        await _context.SaveChangesAsync();
+        return existingCategory;
+    }
 }

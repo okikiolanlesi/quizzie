@@ -10,6 +10,10 @@ public interface ICategoryRepository
     Task<Category> GetByTitle(string title);
     Task<Category> GetById(Guid id);
     Task<List<Category>> GetAll();
+    Task<Category> UpdateCategory( Guid id, Category category);
+
+
+
 
     void Add(Category category);
     Task<bool> SaveChangesAsync();
