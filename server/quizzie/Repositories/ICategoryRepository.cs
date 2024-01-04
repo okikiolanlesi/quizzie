@@ -15,4 +15,6 @@ public interface ICategoryRepository
     void Add(Category category);
     Task<bool> SaveChangesAsync();
 
+    void MarkAsModified(Category category);
+
 }
