@@ -5,13 +5,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Quizzie.DTOs;
 using Quizzie.Models;
+using Quizzie.Repositories;
 using Quizzie.Services;
 
 namespace Quizzie.Controllers;

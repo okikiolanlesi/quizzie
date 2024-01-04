@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Quizzie.Data;
 using Quizzie.Models;
 
-namespace Quizzie;
+namespace Quizzie.Repositories;
 
 public class UserRepository : IUserRepository
 {

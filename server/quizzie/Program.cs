@@ -13,9 +13,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using quizzie;
-using Quizzie;
 using Quizzie.Data;
+using Quizzie.Repositories;
 using Quizzie.Services;
 using Quizzie.Validators;
 using Swashbuckle.AspNetCore.Filters;
@@ -78,6 +77,7 @@ builder.Services
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 
 
 var app = builder.Build();

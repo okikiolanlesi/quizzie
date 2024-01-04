@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Quizzie.Data;
 using Quizzie.Models;
 
-namespace quizzie;
+namespace Quizzie.Repositories;
 
 public class CategoryRepository : ICategoryRepository
 {
