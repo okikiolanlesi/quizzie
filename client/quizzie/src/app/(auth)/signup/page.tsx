@@ -114,7 +114,7 @@ function SignUp() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                placeholder="confirmPassword"
+                placeholder="Confirm Password"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.confirmPassword}

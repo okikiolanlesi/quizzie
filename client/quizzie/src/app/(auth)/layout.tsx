@@ -7,7 +7,7 @@ export default function AuthLayout({
 }) {
   return (
     <section className="flex ">
-      <div className="w-full  min-h-[100vh] hidden sm:block bg-blue w-[80%]">
+      <div className="min-h-[100vh] hidden sm:block bg-blue w-[80%]">
         <div className="  flex h-full min-h-[100vh] justify-center items-center ">
           <div className="text-white p-5 max-w-2xl">
             <h2 className="text-5xl font-bold">

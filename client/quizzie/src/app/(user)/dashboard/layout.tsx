@@ -1,4 +1,6 @@
+"use client";
 import Protected from "@/components/Protected";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import React from "react";
 
 const DashboardProtectedLayout = ({
@@ -6,7 +8,11 @@ const DashboardProtectedLayout = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <Protected>{children}</Protected>;
+  return (
+    <Protected>
+      <DashboardLayout>{children}</DashboardLayout>
+    </Protected>
+  );
 };
 
 export default DashboardProtectedLayout;

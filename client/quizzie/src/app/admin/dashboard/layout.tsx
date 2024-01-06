@@ -1,4 +1,5 @@
 import Protected from "@/components/Protected";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import React from "react";
 
 export default function AdminLayout({
@@ -8,7 +9,7 @@ export default function AdminLayout({
 }) {
   return (
     <Protected admin>
-      <section className=" ">{children}</section>
+      <DashboardLayout>{children}</DashboardLayout>
     </Protected>
   );
 }
