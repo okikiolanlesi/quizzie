@@ -45,6 +45,17 @@ axiosConfig.interceptors.response.use(
       error.response?.data?.error === "Not authorized, token failed" ||
       error.response.status == 401
     ) {
+      //Getting the auth state that was persisted by zustand and setting its values to undefined to logout the user
+      const authStateString = localStorage.getItem("auth");
+      if (authStateString) {
+        const authObj = JSON.parse(authStateString);
+        if (authObj && authObj.state) {
+          authObj.state.token = undefined;
+          authObj.state.user = undefined;
+        }
+      }
+
+      // Redirect to login page after logging the user out
       window.location.href = "/login";
     }
     return Promise.reject(error);

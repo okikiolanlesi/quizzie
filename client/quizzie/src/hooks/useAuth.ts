@@ -1,3 +1,4 @@
+"use client";
 import AuthService, {
   LoginRequestDto,
   RegisterRequestDto,
@@ -19,9 +20,16 @@ const useAuth = () => {
       toast.error(axiosResponseMessage(error));
     },
     onSuccess: (data) => {
-      toast.success(data.message);
-      setUser(data.user);
-      setToken(data.token);
+      const { message, user, token } = data;
+      toast.success(message);
+      setUser(user);
+      setToken(token);
+
+      if (user.role === "Admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/dashboard";
+      }
     },
   });
 
@@ -31,12 +39,20 @@ const useAuth = () => {
       return res?.data;
     },
     onError: (error: any) => {
+      console.log(error);
       toast.error(axiosResponseMessage(error));
     },
     onSuccess: (data) => {
-      toast.success(data.message);
-      setUser(data.user);
-      setToken(data.token);
+      const { message, user, token } = data;
+      toast.success(message);
+      setUser(user);
+      setToken(token);
+
+      if (user.role === "Admin") {
+        window.location.href = "/admin/dashboard";
+      } else {
+        window.location.href = "/dashboard";
+      }
     },
   });
 
