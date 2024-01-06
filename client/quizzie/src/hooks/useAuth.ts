@@ -39,7 +39,6 @@ const useAuth = () => {
       return res?.data;
     },
     onError: (error: any) => {
-      console.log(error);
       toast.error(axiosResponseMessage(error));
     },
     onSuccess: (data) => {
