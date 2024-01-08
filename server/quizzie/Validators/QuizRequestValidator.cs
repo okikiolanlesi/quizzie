@@ -12,7 +12,7 @@ public class QuizRequestValidator : AbstractValidator<QuizDto>
         RuleFor(x => x.Instructions).NotEmpty();
         RuleFor(x => x.Duration).NotEmpty();
         RuleFor(x => x.Description).NotEmpty();
-        RuleFor(x => x.CategoryId).NotEmpty();
+        RuleFor(x => x.CategoryId);
     }
 
 }
