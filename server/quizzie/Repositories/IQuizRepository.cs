@@ -14,6 +14,7 @@ public interface IQuizRepository
     Task<AdminQuizDetailDto> GetByIdWithDetailsAdmin(Guid id);
     void Add(Quiz quiz);
     Task<bool> SaveChangesAsync();
+    void MarkAsModified(Quiz quiz);
 
 
 }
