@@ -14,8 +14,8 @@ public class Quiz
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     //Navigation properties (relationships)
-    public Category Category { get; set; }
-    public Guid CategoryId { get; set; }
+    public Category? Category { get; set; }
+    public Guid? CategoryId { get; set; }
     public User User { get; set; }
     public Guid UserId { get; set; }
     public ICollection<Question> Questions { get; set; }
