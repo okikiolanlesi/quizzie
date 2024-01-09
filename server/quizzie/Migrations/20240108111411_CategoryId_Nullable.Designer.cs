@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Quizzie.Data;
@@ -11,9 +12,11 @@ using Quizzie.Data;
 namespace Quizzie.Migrations
 {
     [DbContext(typeof(QuizzieDbContext))]
-    partial class QuizzieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240108111411_CategoryId_Nullable")]
+    partial class CategoryId_Nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,9 +152,6 @@ namespace Quizzie.Migrations
 
                     b.Property<string>("Instructions")
                         .HasColumnType("text");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");

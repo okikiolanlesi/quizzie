@@ -89,6 +89,29 @@ public class QuizController : ControllerBase
 
     }
 
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    [Route("{id:Guid}")]
+    public async Task<ActionResult> UpdateQuiz(Guid id, QuizDto quizDto)
+    {
+        var quiz = await _quizRepository.GetById(id);
+        if (quiz == null)
+        {
+            return NotFound();
+        }
+
+        quiz.Title = quizDto.Title;
+        quiz.Description = quizDto.Description;
+        quiz.Instructions = quizDto.Instructions;
+        quiz.Duration = quizDto.Duration;
+        quiz.CategoryId = quizDto?.CategoryId;
+
+        _quizRepository.MarkAsModified(quiz);
+
+        await _quizRepository.SaveChangesAsync();
+
+        return Ok(quiz);
+    }
 
     [HttpPut]
     [Authorize(Roles = "Admin")]
@@ -121,7 +144,7 @@ public class QuizController : ControllerBase
     {
         var quiz = await _quizRepository.GetById(id);
 
-        if(quiz is null)
+        if (quiz is null)
         {
             return NotFound(new { message = "Quiz does not exist" });
         }
