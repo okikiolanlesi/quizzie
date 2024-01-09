@@ -95,11 +95,7 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> DeleteById([FromRoute] Guid id)
     {
         var category = await _categoryRepository.DeleteById(id);
-
-        if(category == null)
-        {
-            return null;
-        }
+        
         return Ok(_mapper.Map<Category>(category));
 
     }
