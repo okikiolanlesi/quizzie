@@ -48,4 +48,18 @@ public class CategoryRepository : ICategoryRepository
     {
         _context.Entry(category).State = EntityState.Modified;
     }
+
+    public async Task<Category> DeleteById(Guid id)
+    {
+      var category= await _context.QuizCategories.FirstOrDefaultAsync(x=>x.Id == id);
+        if (category == null) 
+        {
+            return null;
+        }
+        _context.QuizCategories.Remove(category);
+        await _context.SaveChangesAsync();
+        return category;
+            
+        
+    }
 }
