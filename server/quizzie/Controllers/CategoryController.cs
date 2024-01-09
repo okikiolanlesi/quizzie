@@ -23,7 +23,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+     [Authorize(Roles = "Admin")]
     public async Task<ActionResult> CreateCategory([FromBody] CreateOrUpdateCategoryDto categoryDto)
     {
         var existingCategory = await _categoryRepository.GetByTitle(categoryDto.Title);
@@ -87,6 +87,20 @@ public class CategoryController : ControllerBase
         await _categoryRepository.SaveChangesAsync();
 
         return Ok(category);
+
+    }
+    [HttpDelete]
+    [Route("{id:Guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteById([FromRoute] Guid id)
+    {
+        var category = await _categoryRepository.DeleteById(id);
+
+        if(category == null)
+        {
+            return null;
+        }
+        return Ok(_mapper.Map<Category>(category));
 
     }
 }
