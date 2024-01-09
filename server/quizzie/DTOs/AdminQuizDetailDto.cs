@@ -18,4 +18,5 @@ public class AdminQuizDetailDto
     public QuizCategoryDto Category { get; set; }
     public Guid CategoryId { get; set; }
     public ICollection<Question> Questions { get; set; }
+    public bool IsActive { get; set; }
 }

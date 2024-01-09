@@ -17,4 +17,6 @@ public class UserQuizDetailDto
     public QuizCategoryDto Category { get; set; }
     public Guid CategoryId { get; set; }
     public ICollection<QuestionDto> Questions { get; set; }
+    public bool IsActive { get; set; }
+
 }

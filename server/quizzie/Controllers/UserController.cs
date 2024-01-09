@@ -42,4 +42,32 @@ public class UserController : ControllerBase
 
         return Ok(_mapper.Map<UserDto>(user));
     }
+
+    [HttpPut]
+    [Authorize(Roles = "Admin, User")]
+    [Route("{userId:Guid}")]
+    public async Task<ActionResult> ModifyUsername(Guid userId, [FromBody] UserDto userDto)
+    {
+        var user = await _userRepository.GetById(userId);
+
+        if(user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
+
+        _userRepository.MarkAsModified(user);
+        var result = await _userRepository.SaveChangesAsync();
+        if(result == false)
+        {
+            return Problem("Something went wrong while updating user name");
+        }
+        return Ok(new
+        {
+            message="Profile updated successfully",
+            user
+        });
+    }
 }
