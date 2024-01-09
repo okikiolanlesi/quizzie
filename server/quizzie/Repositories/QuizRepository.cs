@@ -50,5 +50,9 @@ public class QuizRepository : IQuizRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
+    public void MarkAsModified(Quiz quiz)
+    {
+        _context.Entry(quiz).State = EntityState.Modified;
+    }
 
 }

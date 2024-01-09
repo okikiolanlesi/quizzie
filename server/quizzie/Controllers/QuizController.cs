@@ -89,4 +89,53 @@ public class QuizController : ControllerBase
 
     }
 
+
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    [Route("disable/{id:Guid}")]
+    public async Task<ActionResult> DisableQuiz(Guid id)
+    {
+        var quiz = await _quizRepository.GetById(id);
+
+        if (quiz is null)
+        {
+            return NotFound(new { message = "Quiz does not exist" });
+        }
+        if (quiz.IsActive == false)
+        {
+            return BadRequest(new { message = "Quiz is already disabled" });
+        }
+        quiz.IsActive = false;
+        _quizRepository.MarkAsModified(quiz);
+        var result = await _quizRepository.SaveChangesAsync();
+
+        if (!result) return Problem("Something went wrong with disabling the quiz");
+
+        return Ok(new { message = "Quiz disabled successfully" });
+    }
+
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    [Route("enable/{id:Guid}")]
+    public async Task<ActionResult> EnableQuiz(Guid id)
+    {
+        var quiz = await _quizRepository.GetById(id);
+
+        if(quiz is null)
+        {
+            return NotFound(new { message = "Quiz does not exist" });
+        }
+        if (quiz.IsActive)
+        {
+            return Ok(new { message = "Quiz is already enabled " });
+        }
+        quiz.IsActive = true;
+        _quizRepository.MarkAsModified(quiz);
+        var result = await _quizRepository.SaveChangesAsync();
+
+        if (!result) return Problem("Something went wrong with disabling the quiz");
+
+        return Ok(new { message = "Quiz enabled successfully" });
+    }
+
 }
