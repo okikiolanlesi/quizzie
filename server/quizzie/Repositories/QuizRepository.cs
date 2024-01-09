@@ -54,6 +54,4 @@ public class QuizRepository : IQuizRepository
     {
         _context.Entry(quiz).State = EntityState.Modified;
     }
-
-
 }

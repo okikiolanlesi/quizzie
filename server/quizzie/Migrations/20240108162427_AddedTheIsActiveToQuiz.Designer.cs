@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Quizzie.Data;
@@ -11,9 +12,11 @@ using Quizzie.Data;
 namespace Quizzie.Migrations
 {
     [DbContext(typeof(QuizzieDbContext))]
-    partial class QuizzieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240108162427_AddedTheIsActiveToQuiz")]
+    partial class AddedTheIsActiveToQuiz
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,7 +138,7 @@ namespace Quizzie.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -307,7 +310,9 @@ namespace Quizzie.Migrations
                 {
                     b.HasOne("Quizzie.Models.Category", "Category")
                         .WithMany("Quizzes")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Quizzie.Models.User", "User")
                         .WithMany()

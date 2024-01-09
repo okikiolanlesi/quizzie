@@ -13,6 +13,7 @@ public class Quiz
     public int Duration { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsActive { get; set; } = false;
     //Navigation properties (relationships)
     public Category? Category { get; set; }
     public Guid? CategoryId { get; set; }
