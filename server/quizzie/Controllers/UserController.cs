@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Tls;
 using Quizzie.DTOs;
 using Quizzie.Repositories;
 
@@ -46,7 +47,7 @@ public class UserController : ControllerBase
     [HttpPut]
     [Authorize(Roles = "Admin, User")]
     [Route("{userId:Guid}")]
-    public async Task<ActionResult> ModifyUsername(Guid userId, [FromBody] UserDto userDto)
+    public async Task<ActionResult> UpdateProfile(Guid userId, [FromBody] UserDto userDto)
     {
         var user = await _userRepository.GetById(userId);
 
@@ -68,6 +69,42 @@ public class UserController : ControllerBase
         {
             message="Profile updated successfully",
             user
+        });
+    }
+
+    [HttpPut]
+    [Authorize(Roles = "Admin,User")]
+    [Route("change-password")]
+
+    public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var user = await _userRepository.GetById(Guid.Parse(userId));
+
+        if(user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+         if (!BCrypt.Net.BCrypt.Verify(changePasswordDto.OldPassword, user.PasswordHash))
+        {
+            return BadRequest(new
+            {
+                message = "Invalid credentials"
+            });
+        };
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordDto.NewPassword);
+
+        user.PasswordHash = hashedPassword;
+        _userRepository.MarkAsModified(user);
+        var result = await _userRepository.SaveChangesAsync();
+        if(result == false)
+        {
+            return Problem("Something went wrong while changing password");
+        }
+        return Ok(new
+        {
+            message = "Password successfully changed"
         });
     }
 }
