@@ -15,6 +15,4 @@ public interface IQuizRepository
     void Add(Quiz quiz);
     Task<bool> SaveChangesAsync();
     void MarkAsModified(Quiz quiz);
-
-
 }
