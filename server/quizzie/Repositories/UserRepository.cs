@@ -31,4 +31,9 @@ public class UserRepository : IUserRepository
     {
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public void MarkAsModified(User user)
+    {
+        _context.Entry(user).State = EntityState.Modified;
+    }
 }

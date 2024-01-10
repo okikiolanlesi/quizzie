@@ -10,4 +10,5 @@ public interface IUserRepository
     Task<User> GetByEmail(string email);
     void Add(User user);
     Task<bool> SaveChangesAsync();
+    void MarkAsModified(User user);
 }
