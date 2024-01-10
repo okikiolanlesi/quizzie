@@ -26,9 +26,9 @@ public class QuizRepository : IQuizRepository
         _context.Quizzes.Add(quiz);
     }
 
-    public async Task<List<Quiz>> GetAll()
+    public async Task<List<GetAllQuizDto>> GetAll()
     {
-        return await _context.Quizzes.ToListAsync();
+        return await _context.Quizzes.Include(x => x.Category).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<Quiz> GetById(Guid id)

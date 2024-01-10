@@ -8,7 +8,7 @@ namespace Quizzie.Repositories;
 
 public interface IQuizRepository
 {
-    Task<List<Quiz>> GetAll();
+    Task<List<GetAllQuizDto>> GetAll();
     Task<Quiz> GetById(Guid id);
     Task<UserQuizDetailDto> GetByIdWithDetails(Guid id);
     Task<AdminQuizDetailDto> GetByIdWithDetailsAdmin(Guid id);

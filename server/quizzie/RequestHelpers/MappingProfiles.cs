@@ -40,6 +40,11 @@ namespace Quizzie.RequestHelpers
 
             CreateMap<Option, UserOptionDto>();
 
+            CreateMap<Quiz, GetAllQuizDto>()
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
+
+
 
         }
     }
