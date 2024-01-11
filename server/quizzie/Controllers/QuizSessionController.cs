@@ -73,7 +73,7 @@ public class QuizSessionController : ControllerBase
         var quizSession = await _quizSessionRepository.GetById(quizSessionId);
 
 
-        if (quizSession == null || quizSession.IsCompleted || quizSession.EndTime >= DateTime.UtcNow)
+        if (quizSession == null || quizSession.IsCompleted || quizSession.EndTime <= DateTime.UtcNow)
         {
 
             return BadRequest(new
@@ -101,13 +101,12 @@ public class QuizSessionController : ControllerBase
             });
         }
 
-        Answer answer;
 
         var existingAnswer = await _answerRepository.GetAnswerForQuestion(quizSession.Id, question.Id);
 
         if (existingAnswer is null)
         {
-            answer = new Answer
+            var answer = new Answer
             {
                 OptionId = answerDto.OptionId,
                 QuestionId = answerDto.QuestionId,
