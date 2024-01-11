@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Quizzie.Data;
 using Quizzie.Models;
@@ -43,5 +44,10 @@ public class QuestionRepository : IQuestionRepository
     public IDbContextTransaction BeginTransaction()
     {
         return _context.Database.BeginTransaction();
+    }
+
+    public Task<Question> GetQuestionForQuizById(Guid questionId, Guid quizId)
+    {
+        return _context.Questions.FirstOrDefaultAsync(x => x.QuizId == quizId && x.Id == questionId);
     }
 }
