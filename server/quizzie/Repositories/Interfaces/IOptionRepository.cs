@@ -11,6 +11,7 @@ public interface IOptionRepository
     Task<List<Option>> GetAllForAQuestion(Guid questionId);
 
     void Add(Option Option);
+    Task<Option> AddOption(Option option);
     void AddRange(List<Option> Option);
     Task<bool> SaveChangesAsync();
 
