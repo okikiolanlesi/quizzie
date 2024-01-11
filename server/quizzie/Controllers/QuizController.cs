@@ -184,6 +184,7 @@ public class QuizController : ControllerBase
 
         if (ongoingSession is not null)
         {
+            System.Console.WriteLine(ongoingSession.Id);
             return BadRequest(new
             {
                 message = "You're already taking this quiz, please finish that one before starting anotehr one"
@@ -204,7 +205,7 @@ public class QuizController : ControllerBase
 
         if (!result) return Problem("Something went wrong with disabling the quiz");
 
-        return Ok(new { message = "Quiz started successfully" });
+        return Ok(new { message = "Quiz started successfully", result = _mapper.Map<QuizSessionDto>(newQuizSession) });
     }
 
 }

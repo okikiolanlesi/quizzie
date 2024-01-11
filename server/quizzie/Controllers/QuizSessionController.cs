@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -35,10 +36,17 @@ public class QuizSessionController : ControllerBase
     [Authorize(Roles = "User")]
     public async Task<ActionResult> GetQuizSessions()
     {
-
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var user = await _userRepository.GetById(Guid.Parse(userId));
+
+        var unMarkedSessions = await _quizSessionRepository.GetEndedSessionsForAUser(Guid.Parse(userId));
+
+        if (unMarkedSessions.Count > 0)
+        {
+            await MarkQuizSessions(unMarkedSessions);
+            await _quizSessionRepository.SaveChangesAsync();
+        }
 
         var quizSessions = await _quizSessionRepository.GetAllForAUser(user.Id);
 
@@ -46,18 +54,26 @@ public class QuizSessionController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,User")]
     [Route("{id:Guid}")]
     public async Task<ActionResult> GetQuizSessionById(Guid id)
     {
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-        var user = await _userRepository.GetById(Guid.Parse(userId));
 
-        var quizSessions = await _quizSessionRepository.GetAllForAUser(user.Id);
+        var quizSession = await _quizSessionRepository.GetById(id);
 
-        return Ok(new { results = quizSessions });
+        if (userRole != "Admin" && Guid.Parse(userId) != quizSession.UserId)
+        {
+            return BadRequest(new
+            {
+                message = "You cant view this quiz"
+            });
+        }
+
+        return Ok(new { results = quizSession });
     }
 
     [HttpPost]
@@ -82,6 +98,14 @@ public class QuizSessionController : ControllerBase
             });
         }
 
+
+        if (quizSession.UserId != Guid.Parse(userId))
+        {
+            return BadRequest(new
+            {
+                message = "You can't answer questions for this quiz"
+            });
+        }
         var question = await _questionRepository.GetQuestionForQuizById(answerDto.QuestionId, quizSession.QuizId);
 
         if (question is null)
@@ -125,8 +149,81 @@ public class QuizSessionController : ControllerBase
 
         if (!result) return Problem("Unable to answer question");
 
+        var refetchedQuizSession = await _quizSessionRepository.GetById(quizSessionId);
+
+
+        return Ok(new { result = _mapper.Map<QuizSessionDto>(refetchedQuizSession) });
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "User")]
+    [Route("submit/{quizSessionId:Guid}")]
+    public async Task<ActionResult> SubmitQuizSession([FromRoute] Guid quizSessionId)
+    {
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var quizSession = await _quizSessionRepository.GetById(quizSessionId);
+
+
+        if (quizSession == null || quizSession.IsCompleted || quizSession.EndTime <= DateTime.UtcNow)
+        {
+
+            return BadRequest(new
+            {
+                message = "Invalid quiz session"
+            });
+        }
+
+        if (quizSession.UserId != Guid.Parse(userId))
+        {
+            return BadRequest(new
+            {
+                message = "You can't submit this quiz"
+            });
+        }
+
+        await MarkQuizSession(_mapper.Map<QuizSession>(quizSession));
+
+        var result = await _answerRepository.SaveChangesAsync();
+
+        if (!result) return Problem("Unable to submit");
+
         return Ok(new { result = _mapper.Map<QuizSessionDto>(quizSession) });
     }
 
+
+    private async Task MarkQuizSessions(List<QuizSession> quizSessions)
+    {
+        if (quizSessions.Count < 1) return;
+
+        foreach (QuizSession quizSession in quizSessions)
+        {
+            var correctAnswersCount = await _quizSessionRepository.CountCorrectAnswers(quizSession.Id);
+            var totalQuestions = await _quizSessionRepository.CountTotalQuestions(quizSession.QuizId);
+
+            quizSession.Score = correctAnswersCount;
+            quizSession.TotalQuestions = totalQuestions;
+            quizSession.IsCompleted = true;
+            quizSession.UpdatedAt = DateTime.UtcNow;
+
+            _quizSessionRepository.MarkAsModified(quizSession);
+
+        }
+    }
+    private async Task MarkQuizSession(QuizSession quizSession)
+    {
+        var correctAnswersCount = await _quizSessionRepository.CountCorrectAnswers(quizSession.Id);
+        var totalQuestions = await _quizSessionRepository.CountTotalQuestions(quizSession.QuizId);
+
+        quizSession.Score = correctAnswersCount;
+        quizSession.TotalQuestions = totalQuestions;
+        quizSession.IsCompleted = true;
+        quizSession.UpdatedAt = DateTime.UtcNow;
+
+        _quizSessionRepository.MarkAsModified(quizSession);
+
+
+    }
 
 }
