@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     [HttpPut]
     [Authorize(Roles = "Admin, User")]
     [Route("{userId:Guid}")]
-    public async Task<ActionResult> UpdateProfile(Guid userId, [FromBody] UserDto userDto)
+    public async Task<ActionResult> UpdateProfile(Guid userId, [FromBody] UpdateUserDto userDto)
     {
         var user = await _userRepository.GetById(userId);
 
