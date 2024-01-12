@@ -9,6 +9,7 @@ namespace Quizzie.Repositories;
 public interface IQuestionRepository
 {
     Task<Question> GetById(Guid id);
+    Task<Question> GetQuestionForQuizById(Guid questionId, Guid quizId);
     Task<List<Question>> GetAllForAQuiz(Guid quizId);
 
     void Add(Question question);

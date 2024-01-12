@@ -92,6 +92,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IOptionRepository, OptionRepository>();
+builder.Services.AddScoped<IQuizSessionRepository, QuizSessionRepository>();
+builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 
 
 var app = builder.Build();
