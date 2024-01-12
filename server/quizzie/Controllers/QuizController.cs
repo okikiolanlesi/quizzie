@@ -3,10 +3,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Quizzie.DTOs;
 using Quizzie.Models;
 using Quizzie.Repositories;
+using Quizzie.RequestHelpers;
 
 namespace Quizzie.Controllers;
 
@@ -52,12 +54,10 @@ public class QuizController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin,User")]
-    public async Task<ActionResult> GetAllQuizzes()
+    public async Task<ActionResult> GetAllQuizzes([FromQuery] QuizSearchParams searchParams)
     {
-        return Ok(new
-        {
-            results = await _quizRepository.GetAll()
-        });
+        var results = await _quizRepository.GetAll(searchParams);
+        return Ok(results);
 
     }
 
@@ -209,3 +209,4 @@ public class QuizController : ControllerBase
     }
 
 }
+

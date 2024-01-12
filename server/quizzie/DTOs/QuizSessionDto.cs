@@ -14,7 +14,6 @@ public class QuizSessionDto
     public double? Score { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    //Navigation properties
     public UserQuizDetailDto Quiz { get; set; }
     public Guid QuizId { get; set; }
     public UserDto User { get; set; }

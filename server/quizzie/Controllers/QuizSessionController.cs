@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Quizzie.DTOs;
 using Quizzie.Models;
 using Quizzie.Repositories;
+using Quizzie.RequestHelpers;
 
 namespace quizzie;
 
@@ -34,7 +35,7 @@ public class QuizSessionController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "User")]
-    public async Task<ActionResult> GetQuizSessions()
+    public async Task<ActionResult> GetQuizSessions([FromQuery] QuizSessionSearchParams searchParams)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -48,9 +49,10 @@ public class QuizSessionController : ControllerBase
             await _quizSessionRepository.SaveChangesAsync();
         }
 
-        var quizSessions = await _quizSessionRepository.GetAllForAUser(user.Id);
+        var quizSessionPayload = await _quizSessionRepository.GetAllForAUser(user.Id, searchParams);
 
-        return Ok(new { results = quizSessions });
+
+        return Ok(new { results = quizSessionPayload });
     }
 
     [HttpGet]

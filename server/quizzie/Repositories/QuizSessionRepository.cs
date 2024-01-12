@@ -9,6 +9,7 @@ using Org.BouncyCastle.Math.EC.Rfc7748;
 using Quizzie.Data;
 using Quizzie.DTOs;
 using Quizzie.Models;
+using Quizzie.RequestHelpers;
 
 namespace Quizzie.Repositories;
 
@@ -27,9 +28,31 @@ public class QuizSessionRepository : IQuizSessionRepository
         _context.QuizSessions.Add(quizSession);
     }
 
-    public async Task<List<QuizSession>> GetAllForAUser(Guid userId)
+    public async Task<PagedResponse<List<QuizSession>>> GetAllForAUser(Guid userId, QuizSessionSearchParams searchParams)
     {
-        return await _context.QuizSessions.Where(x => x.UserId == userId).ToListAsync();
+        var query = _context.QuizSessions.AsQueryable();
+        if (!string.IsNullOrEmpty(searchParams.SearchTerm))
+        {
+            query = query.Where(quizSession => quizSession.Quiz.Title.Contains(searchParams.SearchTerm) || quizSession.Quiz.Description.Contains(searchParams.SearchTerm));
+        }
+
+        query = searchParams?.Status switch
+        {
+            QuizSessionStatus.ongoing => query.Where(x => x.EndTime > DateTime.UtcNow),
+            QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow),
+            _ => query
+        };
+
+        query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
+
+        var results = await query.Where(x => x.UserId == userId).OrderByDescending(x => x.UpdatedAt).ToListAsync();
+        return new PagedResponse<List<QuizSession>>
+        {
+            results = results,
+            totalCount = query.Count(),
+            page = searchParams.PageNumber,
+            pageSize = searchParams.PageSize,
+        };
     }
 
     public async Task<QuizSessionDto> GetById(Guid id)
