@@ -23,7 +23,7 @@ public class OptionController : ControllerBase
         _optionRepository = optionRepository;
     }
 
-  /*  [HttpPatch]
+    [HttpPatch]
     [Authorize(Roles = "Admin")]
     [Route("{id:Guid}")]
     public async Task<ActionResult> DeleteOption(Guid id)
@@ -45,7 +45,7 @@ public class OptionController : ControllerBase
             return Problem("Something went wrong with deleting the option");
         }
         return Ok(new { message = "Option deleted successfully" });
-    }*/
+    }
     [HttpPost]
     [Authorize(Roles = "Admin")]
 
