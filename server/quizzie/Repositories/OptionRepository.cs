@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Quizzie.Data;
 using Quizzie.Models;
 
@@ -32,6 +33,11 @@ public class OptionRepository : IOptionRepository
     public Task<Option> GetById(Guid id)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<Option> GetOptionForQuestionById(Guid optionId, Guid questionId)
+    {
+        return await _context.Options.FirstOrDefaultAsync(x => x.Id == optionId && x.QuestionId == questionId);
     }
 
     public void MarkAsModified(Option Option)

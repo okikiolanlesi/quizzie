@@ -3,10 +3,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Quizzie.DTOs;
 using Quizzie.Models;
 using Quizzie.Repositories;
+using Quizzie.RequestHelpers;
 
 namespace Quizzie.Controllers;
 
@@ -17,12 +19,14 @@ public class QuizController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IQuizRepository _quizRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IQuizSessionRepository _quizSessionRepository;
 
-    public QuizController(IMapper mapper, IQuizRepository quizRepository, IUserRepository userRepository)
+    public QuizController(IMapper mapper, IQuizRepository quizRepository, IUserRepository userRepository, IQuizSessionRepository quizSessionRepository)
     {
         _mapper = mapper;
         _quizRepository = quizRepository;
         _userRepository = userRepository;
+        _quizSessionRepository = quizSessionRepository;
     }
 
     [HttpPost]
@@ -50,12 +54,20 @@ public class QuizController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin,User")]
-    public async Task<ActionResult> GetAllQuizzes()
+    public async Task<ActionResult> GetAllQuizzes([FromQuery] QuizSearchParams searchParams)
     {
-        return Ok(new
-        {
-            results = await _quizRepository.GetAll()
-        });
+        var results = await _quizRepository.GetAllForUsers(searchParams);
+        return Ok(results);
+
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    [Route("admin")]
+    public async Task<ActionResult> GetAllQuizzesAdmin([FromQuery] QuizSearchParams searchParams)
+    {
+        var results = await _quizRepository.GetAll(searchParams);
+        return Ok(results);
 
     }
 
@@ -161,4 +173,50 @@ public class QuizController : ControllerBase
         return Ok(new { message = "Quiz enabled successfully" });
     }
 
+    [HttpPost]
+    [Authorize(Roles = "User")]
+    [Route("start/{id:Guid}")]
+    public async Task<ActionResult> StartQuiz(Guid id)
+    {
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var user = await _userRepository.GetById(Guid.Parse(userId));
+
+        var quiz = await _quizRepository.GetById(id);
+
+        if (quiz is null || !quiz.IsActive)
+        {
+            return BadRequest(new { message = "Invalid quiz" });
+        }
+
+        var ongoingSession = await _quizSessionRepository.GetOngoingQuizForUser(user.Id, id);
+
+        if (ongoingSession is not null)
+        {
+            System.Console.WriteLine(ongoingSession.Id);
+            return BadRequest(new
+            {
+                message = "You're already taking this quiz, please finish that one before starting anotehr one"
+            });
+        }
+
+        var newQuizSession = new QuizSession
+        {
+            StartTime = DateTime.UtcNow,
+            EndTime = DateTime.UtcNow.AddMinutes(quiz.Duration),
+            User = user,
+            Quiz = quiz
+        };
+
+        _quizSessionRepository.Add(newQuizSession);
+
+        var result = await _quizSessionRepository.SaveChangesAsync();
+
+        if (!result) return Problem("Something went wrong with disabling the quiz");
+
+        return Ok(new { message = "Quiz started successfully", result = _mapper.Map<QuizSessionDto>(newQuizSession) });
+    }
+
 }
+
