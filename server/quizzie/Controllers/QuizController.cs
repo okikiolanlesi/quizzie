@@ -56,6 +56,16 @@ public class QuizController : ControllerBase
     [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult> GetAllQuizzes([FromQuery] QuizSearchParams searchParams)
     {
+        var results = await _quizRepository.GetAllForUsers(searchParams);
+        return Ok(results);
+
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    [Route("admin")]
+    public async Task<ActionResult> GetAllQuizzesAdmin([FromQuery] QuizSearchParams searchParams)
+    {
         var results = await _quizRepository.GetAll(searchParams);
         return Ok(results);
 
