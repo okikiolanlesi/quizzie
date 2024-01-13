@@ -3,14 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reset Password</title>
+    <title>Email verification</title>
   </head>
   <body>
     <h1>Hi {{Name}}</h1>
     <p>
-      Please reset your password by clicking here:
-      <a href="{{FrontendBaseUrl}}/email-verification?token={{ResetToken}}">
-        reset password
+      Please verify your email by clicking here:
+      <a
+        href="{{FrontendBaseUrl}}/email-verification?token={{EmailVerificationToken}}&userId={{UserId}}"
+      >
+        verify
       </a>
     </p>
   </body>

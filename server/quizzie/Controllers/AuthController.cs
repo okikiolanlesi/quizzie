@@ -47,7 +47,7 @@ public class AuthController : ControllerBase
         // Checking if user doesn't already exists with that email
         var isAlreadyExists = await _userRepository.GetByEmail(registerDto.Email);
 
-        if (isAlreadyExists is not null)
+        if (isAlreadyExists != null && isAlreadyExists.EmailConfirmed)
         {
             return BadRequest(new
             {
@@ -55,7 +55,13 @@ public class AuthController : ControllerBase
             });
         }
 
+        // Map from dto to user model
         var user = _mapper.Map<User>(registerDto);
+
+        // Set email verification data
+        var emailVerificationToken = GenerateUniqueToken();
+        user.EmailVerificationToken = emailVerificationToken;
+        user.EmailVerificationTokenExpiration = DateTime.UtcNow.AddHours(24);
 
         // Hashing the password before saving in the database
         user.PasswordHash = HashPassword(registerDto.Password);
@@ -66,27 +72,28 @@ public class AuthController : ControllerBase
         // Committing changes
         var result = await _userRepository.SaveChangesAsync();
 
-        // Sending welcome mail to newly registered user
+        // Sending verification mail to newly registered user
         try
         {
-            await _emailService.SendHtmlEmailAsync(user.Email, "Welcome to Quizzie", "Welcome", new { Name = user.FirstName + " " + user.LastName });
+            await _emailService.SendHtmlEmailAsync(user.Email, "Verify your email", "VerifyEmail", new
+            {
+                FrontendBaseUrl = _configuration.GetSection("AppSettings:FrontendBaseUrl").Value,
+                Name = user.FirstName,
+                EmailVerificationToken = emailVerificationToken,
+                UserId = user.Id
+            });
         }
         catch (Exception e)
         {
-            System.Console.WriteLine(e);
-            System.Console.WriteLine("Failed to send welcome email");
+            Console.WriteLine(e);
+            Console.WriteLine("Failed to send verification email");
         }
 
         if (!result) return Problem(title: "Something went wrong");
 
-        // Create new JWT token
-        string token = CreateJwtToken(user);
-
         return Ok(new
         {
             message = "User registered successfully",
-            user = _mapper.Map<UserDto>(user),
-            token
         });
     }
 
@@ -101,6 +108,14 @@ public class AuthController : ControllerBase
             return BadRequest(new
             {
                 message = "Invalid credentials"
+            });
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            return BadRequest(new
+            {
+                message = "Email yet to be verified"
             });
         }
 
@@ -120,12 +135,46 @@ public class AuthController : ControllerBase
 
         return Ok(new
         {
-            message = "Login successfull"
-            ,
+            message = "Login successfull",
             token,
             user = userdto
         });
 
+    }
+
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] Guid userId, [FromQuery] string token)
+    {
+        var user = await _userRepository.GetById(userId);
+
+        if (user == null || user.EmailVerificationToken != token)
+        {
+            // Invalid or expired token
+            return BadRequest(new { message = "Invalid verification token." });
+        }
+
+        if (user.EmailVerificationTokenExpiration < DateTime.UtcNow)
+        {
+            // Invalid or expired token
+            _userRepository.DeleteUser(user.Id);
+
+            return BadRequest(new { message = "Expired verification token, please register again to verify your email" });
+        }
+
+        user.EmailConfirmed = true;
+        user.EmailVerificationToken = null;
+        user.EmailVerificationTokenExpiration = null;
+
+        // Save the updated user to the database
+        _userRepository.MarkAsModified(user);
+
+        var result = await _userRepository.SaveChangesAsync();
+        if (result == false)
+        {
+            return Problem("Something went wrong");
+        }
+
+        return Ok(new { message = "Email verification successful. You can now log in." });
     }
 
     [HttpPost]
