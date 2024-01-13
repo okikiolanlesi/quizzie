@@ -36,4 +36,9 @@ public class UserRepository : IUserRepository
     {
         _context.Entry(user).State = EntityState.Modified;
     }
+
+    public async Task<User> GetUserByResetToken(string resetToken)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.ResetToken == resetToken);
+    }
 }

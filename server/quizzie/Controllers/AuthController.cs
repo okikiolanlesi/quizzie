@@ -58,7 +58,7 @@ public class AuthController : ControllerBase
         var user = _mapper.Map<User>(registerDto);
 
         // Hashing the password before saving in the database
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
+        user.PasswordHash = HashPassword(registerDto.Password);
 
         // Saving user
         _userRepository.Add(user);
@@ -80,7 +80,7 @@ public class AuthController : ControllerBase
         if (!result) return Problem(title: "Something went wrong");
 
         // Create new JWT token
-        string token = CreateToken(user);
+        string token = CreateJwtToken(user);
 
         return Ok(new
         {
@@ -105,7 +105,7 @@ public class AuthController : ControllerBase
         }
 
         // Verifying if password provided matches the saved hashed password
-        if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+        if (!VerifyPassword(loginDto.Password, user.PasswordHash))
         {
             return BadRequest(new
             {
@@ -114,7 +114,7 @@ public class AuthController : ControllerBase
         };
 
         // Creating JWT
-        string token = CreateToken(user);
+        string token = CreateJwtToken(user);
 
         var userdto = _mapper.Map<UserDto>(user);
 
@@ -128,7 +128,74 @@ public class AuthController : ControllerBase
 
     }
 
-    private string CreateToken(User user)
+    [HttpPost]
+    [Route("forgot-password")]
+    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        var user = await _userRepository.GetByEmail(forgotPasswordDto.Email);
+
+        if (user == null)
+        {
+            return Ok();
+        }
+
+        // Generate a unique token for resetting password
+        var resetToken = GenerateUniqueToken();
+        user.ResetToken = resetToken;
+        user.ResetTokenExpiration = DateTime.UtcNow.AddHours(1); // Token expiration time
+
+        _userRepository.MarkAsModified(user);
+        var result = await _userRepository.SaveChangesAsync();
+        if (result == false)
+        {
+            return Problem("Something went wrong");
+        }
+
+        // Send the reset link via email
+        _emailService.SendHtmlEmailAsync(user.Email, "Reset Password", "ResetPassword", new
+        {
+            FrontendBaseUrl = _configuration.GetSection("AppSettings:FrontendBaseUrl").Value,
+            Name = user.FirstName,
+            ResetToken = resetToken
+        });
+
+        return Ok(new
+        {
+            message = "Password reset email sent"
+        });
+    }
+
+    [HttpPost]
+    [Route("reset-password")]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+    {
+        var user = await _userRepository.GetUserByResetToken(resetPasswordDto.Token);
+
+        if (user == null || user.ResetTokenExpiration < DateTime.UtcNow)
+        {
+            // Token is invalid or expired
+            return BadRequest("Invalid or expired token");
+        }
+
+        // Reset password
+        user.PasswordHash = HashPassword(resetPasswordDto.NewPassword);
+        user.ResetToken = null;
+        user.ResetTokenExpiration = null;
+
+        _userRepository.MarkAsModified(user);
+        var result = await _userRepository.SaveChangesAsync();
+        if (result == false)
+        {
+            return Problem("Something went wrong");
+        }
+
+        return Ok(new
+        {
+            message = "Password reset succesfully"
+        });
+    }
+
+    private string CreateJwtToken(User user)
     {
 
         // Declaring claims we would like to write to the JWT
@@ -158,4 +225,19 @@ public class AuthController : ControllerBase
         return jwt;
     }
 
+    private string GenerateUniqueToken()
+    {
+        return Guid.NewGuid().ToString();
+    }
+
+    private string HashPassword(string password)
+    {
+
+        return BCrypt.Net.BCrypt.HashPassword(password);
+    }
+    private bool VerifyPassword(string password, string passwordHash)
+    {
+
+        return BCrypt.Net.BCrypt.Verify(password, passwordHash);
+    }
 }

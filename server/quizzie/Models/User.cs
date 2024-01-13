@@ -12,4 +12,6 @@ public class User
     public Role Role { get; set; } = Role.User;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public string ResetToken { get; set; }
+    public DateTime? ResetTokenExpiration { get; set; }
 }
