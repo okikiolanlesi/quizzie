@@ -33,7 +33,7 @@ public class QuizSessionRepository : IQuizSessionRepository
         var query = _context.QuizSessions.AsQueryable();
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
         {
-            query = query.Where(quizSession => quizSession.Quiz.Title.Contains(searchParams.SearchTerm) || quizSession.Quiz.Description.Contains(searchParams.SearchTerm));
+            query = query.Where(quizSession => quizSession.Quiz.Title.ToLower().Contains(searchParams.SearchTerm.ToLower()) || quizSession.Quiz.Description.ToLower().Contains(searchParams.SearchTerm.ToLower()));
         }
 
         query = searchParams?.Status switch
@@ -42,6 +42,7 @@ public class QuizSessionRepository : IQuizSessionRepository
             QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow),
             _ => query
         };
+        var count = query.Count();
 
         query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
 
@@ -49,7 +50,7 @@ public class QuizSessionRepository : IQuizSessionRepository
         return new PagedResponse<List<QuizSession>>
         {
             results = results,
-            totalCount = query.Count(),
+            totalCount = count,
             page = searchParams.PageNumber,
             pageSize = searchParams.PageSize,
         };

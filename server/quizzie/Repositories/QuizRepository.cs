@@ -32,7 +32,7 @@ public class QuizRepository : IQuizRepository
         var query = _context.Quizzes.AsQueryable();
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
         {
-            query = query.Where(quiz => quiz.Title.Contains(searchParams.SearchTerm) || quiz.Description.Contains(searchParams.SearchTerm));
+            query = query.Where(quiz => quiz.Title.ToLower().Contains(searchParams.SearchTerm.ToLower()) || quiz.Description.ToLower().Contains(searchParams.SearchTerm.ToLower()));
         }
 
         if (!string.IsNullOrEmpty(searchParams.Category.ToString()))
@@ -41,12 +41,14 @@ public class QuizRepository : IQuizRepository
 
         }
 
+        var count = query.Count();
+
         query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
         var result = await query.Include(x => x.Category).OrderByDescending(x => x.UpdatedAt).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
         var payload = new PagedResponse<List<GetAllQuizDto>>
         {
             results = result,
-            totalCount = query.Count(),
+            totalCount = count,
             page = searchParams.PageNumber,
             pageSize = searchParams.PageSize,
         };
@@ -58,7 +60,7 @@ public class QuizRepository : IQuizRepository
         var query = _context.Quizzes.AsQueryable();
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
         {
-            query = query.Where(quiz => quiz.Title.Contains(searchParams.SearchTerm) || quiz.Description.Contains(searchParams.SearchTerm));
+            query = query.Where(quiz => quiz.Title.ToLower().Contains(searchParams.SearchTerm.ToLower()) || quiz.Description.ToLower().Contains(searchParams.SearchTerm.ToLower()));
         }
 
         if (!string.IsNullOrEmpty(searchParams.Category.ToString()))
@@ -67,13 +69,16 @@ public class QuizRepository : IQuizRepository
 
         }
 
+        var count = query.Count();
         query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
         query = query.Where(x => x.IsActive);
         var result = await query.Include(x => x.Category).OrderByDescending(x => x.UpdatedAt).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
+
+        System.Console.WriteLine(count);
         var payload = new PagedResponse<List<GetAllQuizDto>>
         {
             results = result,
-            totalCount = query.Count(),
+            totalCount = count,
             page = searchParams.PageNumber,
             pageSize = searchParams.PageSize,
         };
