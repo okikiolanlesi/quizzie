@@ -31,9 +31,6 @@ const UserDashboard = () => {
 
   const getCategoriesQuery = getCategories();
 
-  console.log(getQuizzesQuery.data);
-  console.log(category);
-  console.log(getCategoriesQuery.data);
   return (
     <div>
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 ">

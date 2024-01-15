@@ -42,6 +42,35 @@ export interface GetAllQuizResponseDto {
   pageSize: number;
 }
 
+type Option = {
+  id: string;
+  optionText: string;
+};
+
+type Question = {
+  id: string;
+  questionText: string;
+  createdAt: string;
+  updatedAt: string;
+  options: Option[];
+};
+
+type QuizDetail = {
+  id: string;
+  title: string;
+  description: string;
+  instructions: string;
+  duration: number;
+  createdAt: string;
+  updatedAt: string;
+  user: User;
+  userId: string;
+  category: Category;
+  categoryId: string;
+  questions: Question[];
+  isActive: boolean;
+};
+
 class QuizService {
   static getAll = async (queryParams: {
     searchTerm?: string;
@@ -50,6 +79,12 @@ class QuizService {
     category?: string;
   }): Promise<AxiosResponse<GetAllQuizResponseDto>> => {
     return await axiosConfig.get("quiz", { params: queryParams });
+  };
+
+  static getOne = async (
+    quizId: string
+  ): Promise<AxiosResponse<QuizDetail>> => {
+    return await axiosConfig.get(`quiz/${quizId}`);
   };
 }
 
