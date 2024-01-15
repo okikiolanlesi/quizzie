@@ -9,7 +9,7 @@ export default function Instruction({
 }) {
   const { getAQuiz } = useQuiz();
 
-  const { isLoading, data } = getAQuiz(params.quizId);
+  const { isLoading, data, isError } = getAQuiz(params.quizId);
 
   if (isLoading) {
     return (
@@ -19,6 +19,9 @@ export default function Instruction({
     );
   }
 
+  if (isError) {
+    return <div>Something went wrong</div>;
+  }
   return (
     <section className="w-full mt-2 ">
       <div className="w-full flex justify-center items-center max-h-28 overflow-hidden gap-6">
