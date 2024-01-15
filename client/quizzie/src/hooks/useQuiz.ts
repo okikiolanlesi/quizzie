@@ -28,7 +28,22 @@ const useQuiz = () => {
     });
   };
 
-  return { getQuizzes };
+  const getAQuiz = (quizId: string) => {
+    return useQuery({
+      queryKey: ["getAQuiz", quizId],
+      queryFn: async () => {
+        try {
+          const res = await QuizService.getOne(quizId);
+          return res?.data;
+        } catch (e) {
+          console.log(e);
+          toast.error("Error fetching quiz details");
+        }
+      },
+    });
+  };
+
+  return { getQuizzes, getAQuiz };
 };
 
 export default useQuiz;
