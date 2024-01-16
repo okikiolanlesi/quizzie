@@ -8,10 +8,11 @@ public class RegisterRequestValidator : AbstractValidator<RegisterDto>
 {
     public RegisterRequestValidator()
     {
-        RuleFor(x => x.FirstName).NotEmpty();
-        RuleFor(x => x.LastName).NotEmpty();
-        RuleFor(x => x.Password).NotEmpty();
-        RuleFor(x => x.ConfirmPassword).NotEmpty();
+        // Invokes set of rule for RegisterDto
+        RuleFor(x => x.FirstName).NotEmpty().WithMessage("FirstName must not be empty");
+        RuleFor(x => x.LastName).NotEmpty().WithMessage("LastName must not be empty");
+        RuleFor(x => x.Password).NotEmpty().WithMessage("Password cannot be empty");
+        RuleFor(x => x.ConfirmPassword).NotEmpty().WithMessage("ConfirmPassword cannot be empty");
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
     }
 }

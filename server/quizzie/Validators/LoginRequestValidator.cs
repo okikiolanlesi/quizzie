@@ -8,7 +8,13 @@ public class LoginRequestValidator : AbstractValidator<LoginDto>
 {
     public LoginRequestValidator()
     {
-        RuleFor(x => x.Password).NotEmpty();
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        // Invokes set of rule for LoginDto
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage("Password cannot be empty");
+
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .EmailAddress();
     }
 }

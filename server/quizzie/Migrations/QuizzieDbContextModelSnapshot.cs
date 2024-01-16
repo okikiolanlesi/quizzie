@@ -17,7 +17,7 @@ namespace Quizzie.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -89,6 +89,9 @@ namespace Quizzie.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsCorrect")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("OptionText")
@@ -195,7 +198,7 @@ namespace Quizzie.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("TotalQuestions")
+                    b.Property<int?>("TotalQuestions")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")

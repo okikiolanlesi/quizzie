@@ -9,6 +9,5 @@ public class AdminQuestionDto
     public string QuestionText { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    //Navigation Properties
     public ICollection<AdminOptionDto> Options { get; set; }
 }
