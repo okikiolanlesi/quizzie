@@ -7,7 +7,7 @@ import CategoryService from "@/apiServices/categoryService";
 import { useQuery } from "@tanstack/react-query";
 
 const useCategories = (page = 1) => {
-  const getCategories = () => {
+  const GetCategories = () => {
     return useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
@@ -17,7 +17,7 @@ const useCategories = (page = 1) => {
     });
   };
 
-  return { getCategories };
+  return { GetCategories };
 };
 
 export default useCategories;

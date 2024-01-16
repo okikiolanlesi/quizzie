@@ -57,7 +57,7 @@ export function PaginationCustom({
           </PaginationItem>
         )}
         {pages.map((page) => (
-          <PaginationItem onClick={() => onSelectPage(page)}>
+          <PaginationItem key={page} onClick={() => onSelectPage(page)}>
             <PaginationLink isActive={activePage == page} href="#">
               {page}
             </PaginationLink>

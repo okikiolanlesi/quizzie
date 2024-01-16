@@ -13,7 +13,7 @@ interface GetQuizzesParams {
 }
 
 const useQuiz = () => {
-  const getQuizzes = (params: GetQuizzesParams) => {
+  const GetQuizzes = (params: GetQuizzesParams) => {
     return useQuery({
       queryKey: ["quizzes", params],
       queryFn: async () => {
@@ -28,7 +28,7 @@ const useQuiz = () => {
     });
   };
 
-  const getAQuiz = (quizId: string) => {
+  const GetAQuiz = (quizId: string) => {
     return useQuery({
       queryKey: ["getAQuiz", quizId],
       queryFn: async () => {
@@ -43,7 +43,7 @@ const useQuiz = () => {
     });
   };
 
-  return { getQuizzes, getAQuiz };
+  return { GetQuizzes, GetAQuiz };
 };
 
 export default useQuiz;
