@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -45,7 +46,10 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
-
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Simple Quiz App", Version = "v1" });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
@@ -102,7 +106,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c=>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Simple Quiz App");
+    });
 }
 
 app.UseHttpsRedirection();
