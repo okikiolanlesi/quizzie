@@ -20,16 +20,16 @@ const UserDashboard = () => {
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>();
 
-  const { getQuizzes } = useQuiz();
-  const { getCategories } = useCategories();
+  const { GetQuizzes } = useQuiz();
+  const { GetCategories } = useCategories();
 
-  const getQuizzesQuery = getQuizzes({
+  const getQuizzesQuery = GetQuizzes({
     searchTerm: searchTerm,
     pageNumber: page,
     category: category,
   });
 
-  const getCategoriesQuery = getCategories();
+  const getCategoriesQuery = GetCategories();
 
   return (
     <div>
@@ -48,7 +48,9 @@ const UserDashboard = () => {
           </SelectTrigger>
           <SelectContent>
             {getCategoriesQuery.data?.map((category) => (
-              <SelectItem value={category.id}>{category.title}</SelectItem>
+              <SelectItem value={category.id} key={category.id}>
+                {category.title}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -59,12 +61,13 @@ const UserDashboard = () => {
         </div>
       ) : getQuizzesQuery.data?.results.length === 0 ? (
         <h1 className="my-8">
-          Oops, seems we don't have what you're looking for
+          Oops, seems we don&apos;t have what you&apos;re looking for
         </h1>
       ) : (
         <div className="grid grid-flow-row-dense grid-cols-2 md:grid-cols-3 gap-4 mt-6">
           {getQuizzesQuery.data?.results.map((quiz) => (
             <QuizCard
+              key={quiz.id}
               quizName={quiz.title}
               quizPicture="https://th.bing.com/th/id/R.f9fad17ce2f232a4e5ef2e5d91a1bdcc?rik=%2fyZXX2VBzA5chQ&pid=ImgRaw&r=0"
               quizId={quiz.id}

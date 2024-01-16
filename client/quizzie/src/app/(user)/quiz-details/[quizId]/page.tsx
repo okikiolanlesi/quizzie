@@ -7,9 +7,9 @@ export default function Instruction({
 }: {
   params: { quizId: string };
 }) {
-  const { getAQuiz } = useQuiz();
+  const { GetAQuiz } = useQuiz();
 
-  const { isLoading, data, isError } = getAQuiz(params.quizId);
+  const { isLoading, data, isError } = GetAQuiz(params.quizId);
 
   if (isLoading) {
     return (
