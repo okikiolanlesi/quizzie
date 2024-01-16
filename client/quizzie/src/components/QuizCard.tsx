@@ -9,8 +9,8 @@ interface Quiz {
 
 function QuizCard(props: Quiz) {
   return (
-    <div>
-      <Link className="cursor-pointer" href="">
+    <div key={props.quizId}>
+      <Link className="cursor-pointer" href={`/quiz-details/${props.quizId}`}>
         <div className="bg-white flex justify-between w-full border p-2 rounded-lg">
           <div className="flex flex-col w-full pb-4">
             <div className=" h-48 w-full overflow-hidden">

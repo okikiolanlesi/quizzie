@@ -13,7 +13,7 @@ interface GetQuizzesParams {
 }
 
 const useQuiz = () => {
-  const getQuizzes = (params: GetQuizzesParams) => {
+  const GetQuizzes = (params: GetQuizzesParams) => {
     return useQuery({
       queryKey: ["quizzes", params],
       queryFn: async () => {
@@ -28,7 +28,22 @@ const useQuiz = () => {
     });
   };
 
-  return { getQuizzes };
+  const GetAQuiz = (quizId: string) => {
+    return useQuery({
+      queryKey: ["getAQuiz", quizId],
+      queryFn: async () => {
+        try {
+          const res = await QuizService.getOne(quizId);
+          return res?.data;
+        } catch (e) {
+          console.log(e);
+          toast.error("Error fetching quiz details");
+        }
+      },
+    });
+  };
+
+  return { GetQuizzes, GetAQuiz };
 };
 
 export default useQuiz;
