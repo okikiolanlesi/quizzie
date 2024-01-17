@@ -17,7 +17,7 @@ export type Quiz = {
   quizName: string;
   createdAt: string;
   updatedAt: string;
-  status: "pending" | "processing" | "success" | "failed";
+  status: "enabled" | "disabled";
   // action: string; // should be clickable
 };
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Quiz, columns } from "@/components/Columns"
 import {
   Table,
   TableBody,
@@ -10,8 +11,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable";
+import SearchBar from "@/components/SearchBar";
 
 // TODO: Add functionality to table dropdown (enable/disable, details page, ?softdelete?)
+// Switch Columns button to Create Quiz
+// Make filter work on quizzes/page.tsx
+// Make search work on quizzes/page.tsx
+// Category filter on quizzes/page.tsx
 
 async function getData(): Promise<Quiz[]> {
   // Fetch data the API here
@@ -21,8 +27,58 @@ async function getData(): Promise<Quiz[]> {
       quizName: "stories",
       createdAt: "today",
       updatedAt: "today",
-      status: "active",
+      status: "enabled",
     },
+    {
+      id: "728ed52f",
+      quizName: "stories",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+    {
+      id: "728ed52f",
+      quizName: "stories",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+    {
+      id: "728ed52f",
+      quizName: "stories",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+    {
+      id: "728ed52f",
+      quizName: "stories",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+    {
+      id: "728ed52f",
+      quizName: "fashion",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+    {
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+    {
+      id: "728ed52f",
+      quizName: "labs",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
+
     // ...
   ]
 }
@@ -36,6 +92,7 @@ async function CreateQuiz() {
             <Button className="bg-purple font-bold h-10 w-30 border p-2 rounded-lg items-center bottom-20">
                  Create Quiz
             </Button>
+            <SearchBar />
         </div>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={data} />
