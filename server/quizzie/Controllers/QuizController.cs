@@ -76,13 +76,22 @@ public class QuizController : ControllerBase
     [Route("{id:Guid}")]
     public async Task<ActionResult> GetAQuiz(Guid id)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var quiz = await _quizRepository.GetByIdWithDetails(id);
+
+        QuizSession ongoingSession = null;
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            ongoingSession = await _quizSessionRepository.GetUserOngoingSessionForAQuiz(Guid.Parse(userId), id);
+        }
 
         if (quiz is null)
         {
             return NotFound(new { message = "Quiz does not exist" });
         }
-        return Ok(quiz);
+        return Ok(new { result = quiz, ongoingSession = _mapper.Map<QuizSessionDto>(ongoingSession) });
 
     }
 

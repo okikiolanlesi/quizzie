@@ -90,5 +90,9 @@ public class QuizSessionRepository : IQuizSessionRepository
     {
         return await _context.QuizSessions.Where(x => x.EndTime <= DateTime.UtcNow && !x.IsCompleted).ToListAsync();
     }
+    public async Task<QuizSession> GetUserOngoingSessionForAQuiz(Guid userId, Guid quizId)
+    {
+        return await _context.QuizSessions.FirstOrDefaultAsync(x => x.EndTime >= DateTime.UtcNow && !x.IsCompleted && x.UserId == userId && x.QuizId == quizId);
+    }
 }
 

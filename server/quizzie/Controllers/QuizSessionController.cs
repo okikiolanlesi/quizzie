@@ -191,7 +191,11 @@ public class QuizSessionController : ControllerBase
 
         if (!result) return Problem("Unable to submit");
 
-        return Ok(new { result = _mapper.Map<QuizSessionDto>(quizSession) });
+        var quizSessionPayload = await _quizSessionRepository.GetById(quizSessionId);
+
+
+
+        return Ok(new { result = quizSessionPayload });
     }
 
 
