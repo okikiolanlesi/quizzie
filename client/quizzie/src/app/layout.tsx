@@ -4,7 +4,7 @@ import Providers from "@/utils/Provider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "Quizzie",
+  title: "Quizzard",
 };
 
 export default function RootLayout({

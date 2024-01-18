@@ -39,7 +39,7 @@ const DashboardNavBar = (props: {
               src={"/images/logo/logo-icon.svg"}
               alt="Logo"
             /> */}
-            <h1 className="font-bold text-2xl text-deepBlue">Quizzie</h1>
+            <h1 className="font-bold text-2xl text-deepBlue">Quizzard</h1>
           </Link>
         </div>
 

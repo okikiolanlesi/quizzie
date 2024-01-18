@@ -75,7 +75,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             src={"/images/logo/logo.svg"}
             alt="Logo"
           /> */}
-          <p className="text-2xl font-bold text-white">Quizzie</p>
+          <p className="text-2xl font-bold text-white">Quizzard</p>
         </Link>
 
         <button
