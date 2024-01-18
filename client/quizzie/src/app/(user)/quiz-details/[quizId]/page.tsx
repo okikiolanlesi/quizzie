@@ -2,12 +2,14 @@
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import useQuiz from "@/hooks/useQuiz";
+import { useRouter } from "next/navigation";
 export default function Instruction({
   params,
 }: {
   params: { quizId: string };
 }) {
-  const { GetAQuiz } = useQuiz();
+  const router = useRouter();
+  const { GetAQuiz, StartQuiz } = useQuiz();
 
   const { isLoading, data, isError } = GetAQuiz(params.quizId);
 
@@ -32,23 +34,34 @@ export default function Instruction({
         />
       </div>
       <div className="flex flex-col space-y-6 justify-center items-center border-b-2 py-5 w-full  ">
-        <h5 className="font-bold text-center text-4xl">{data?.title}</h5>
-        <p className="text-center font-light">{data?.description}</p>
+        <h5 className="font-bold text-center text-4xl">{data?.result.title}</h5>
+        <p className="text-center font-light">{data?.result.description}</p>
       </div>
       <div>
         <h5 className="text-xl font-medium text-center mt-6">{}</h5>
         <p className="text-center font-light">
-          <span className="font-bold">Total Time:</span> {data?.duration}{" "}
+          <span className="font-bold">Total Time:</span> {data?.result.duration}{" "}
           Minutes
         </p>
         <p className="text-center font-light">
           <span className="font-bold">Total Questions:</span>{" "}
-          {data?.questions.length}
+          {data?.result.questions.length}
         </p>
         <h5 className="font-bold text-xl text-center mt-6">INSTRUCTION</h5>
-        <p className="my-6">{data?.instructions}</p>
-        <div className="flex justify-center items-center">
-          <Button>Start Quiz</Button>
+        <p className="my-6">{data?.result.instructions}</p>
+        <div className="flex justify-center items-center ">
+          <Button
+            onClick={() => {
+              if (data?.ongoingSession) {
+                router.push(`/questions/${data?.ongoingSession.id}`);
+              } else {
+                StartQuiz.mutate(data?.result.id!);
+              }
+            }}
+            className="bg-blue hover:bg-white hover:text-deepBlue hover:border-2 hover:border-deepBlue"
+          >
+            {!data?.ongoingSession ? "Start" : "Resume"} Quiz
+          </Button>
         </div>
       </div>
     </section>

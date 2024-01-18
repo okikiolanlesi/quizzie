@@ -37,7 +37,6 @@ export function PaginationCustom({
 
   const pages = useMemo(getPages, [activePage, totalPages]);
 
-  console.log({ pages, activePage, totalPages });
   return (
     <Pagination>
       <PaginationContent className="flex-wrap">

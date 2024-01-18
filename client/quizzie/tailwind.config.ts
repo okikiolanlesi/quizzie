@@ -35,6 +35,7 @@ const config: Config = {
       },
       borderColor: {
         deepBlue: "#1B223F",
+        purple: "#A934F1",
       },
       fontFamily: {
         heading: ["Urbanist", "sans-serif"],
