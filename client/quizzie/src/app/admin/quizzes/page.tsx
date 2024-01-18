@@ -1,5 +1,5 @@
 import React from "react";
-import { Quiz, columns } from "@/components/Columns"
+import Columns, { Quiz } from "@/components/Columns";
 import {
   Table,
   TableBody,
@@ -95,7 +95,7 @@ async function CreateQuiz() {
             <SearchBar />
         </div>
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={Columns} data={data} />
       </div>
       <Table>
         <TableCaption>All Quizzes.</TableCaption>

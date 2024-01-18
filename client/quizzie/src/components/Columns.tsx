@@ -10,9 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { networkInterfaces } from "os";
 
 
-export type Quiz = {
+ export interface Quiz {
   id: string; // This is the unique ID of the row. Possibly update
   quizName: string;
   createdAt: string;
@@ -21,7 +22,7 @@ export type Quiz = {
   // action: string; // should be clickable
 };
 
-export const columns: ColumnDef<Quiz>[] = [
+const Columns: ColumnDef<Quiz>[] = [
   {
     accessorKey: "quizName",
     header: ({ column }) => {
@@ -81,3 +82,5 @@ export const columns: ColumnDef<Quiz>[] = [
         },
       },
 ];
+
+export default Columns;
