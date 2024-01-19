@@ -38,8 +38,8 @@ public class QuizSessionRepository : IQuizSessionRepository
 
         query = searchParams?.Status switch
         {
-            QuizSessionStatus.ongoing => query.Where(x => x.EndTime > DateTime.UtcNow),
-            QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow),
+            QuizSessionStatus.ongoing => query.Where(x => x.EndTime > DateTime.UtcNow && !x.IsCompleted),
+            QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow || x.IsCompleted),
             _ => query
         };
 
