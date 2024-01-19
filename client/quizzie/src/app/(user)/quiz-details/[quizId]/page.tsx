@@ -2,6 +2,7 @@
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import useQuiz from "@/hooks/useQuiz";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 export default function Instruction({
   params,
@@ -27,10 +28,13 @@ export default function Instruction({
   return (
     <section className="w-full mt-2 ">
       <div className="w-full flex justify-center items-center max-h-28 overflow-hidden gap-6">
-        <img
-          className="w-full h-full object-cover"
-          src="https://img.freepik.com/free-photo/stock-market-exchange-economics-investment-graph_53876-167143.jpg?size=626&ext=jpg&ga=GA1.2.212456353.1696925456&semt=ais"
+        <Image
+          className="w-full h-full object-cover self-center"
+          src="https://th.bing.com/th/id/R.fdc244c2603d3db1bc44b215bf1f9835?rik=6YecZxhgVB2uAQ&pid=ImgRaw&r=0"
           alt=""
+          width={100}
+          height={100}
+          unoptimized
         />
       </div>
       <div className="flex flex-col space-y-6 justify-center items-center border-b-2 py-5 w-full  ">

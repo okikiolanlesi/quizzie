@@ -11,7 +11,7 @@ const Completionist = () => <span>Time is up!</span>;
 
 const renderer = (endTime: Date, startTime: Date) => {
   const totalDuration = endTime.getTime() - startTime.getTime();
-  return ({
+  const Output = ({
     total: totalTimeLeft,
     hours,
     minutes,
@@ -35,6 +35,7 @@ const renderer = (endTime: Date, startTime: Date) => {
       );
     }
   };
+  return Output;
 };
 
 const QuizTimer = ({ endTime, startTime, onTimeEnd }: IQuizTimerProps) => {

@@ -46,7 +46,7 @@ const UserDashboard = () => {
             {getOngoingQuizSessionsQuery.data?.results.results.map(
               (ongoingQuizSession, index) => {
                 return (
-                  <div>
+                  <div key={ongoingQuizSession.id}>
                     <ResultCard
                       quizSession={ongoingQuizSession}
                       backgroundGradient={
@@ -117,6 +117,7 @@ const UserDashboard = () => {
           {getFinishedQuizSessionsQuery.data?.results.results.map(
             (quizSession, index) => (
               <ResultCard
+                key={quizSession.id}
                 quizSession={quizSession}
                 backgroundGradient={
                   (index + 1) % 2 == 0

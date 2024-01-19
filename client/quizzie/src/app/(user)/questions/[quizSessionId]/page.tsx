@@ -64,7 +64,7 @@ export default function QuizQuestion({
     if (submit) {
       SubmitQuizSession.mutate(params.quizSessionId);
     }
-  }, [submit]);
+  }, [submit, params.quizSessionId]);
 
   if (getQuizSessionQuery.isLoading || SubmitQuizSession.isPending) {
     return (
