@@ -80,7 +80,7 @@ export default function QuizQuestion({
 
   return (
     <>
-      {/* <ConfirmModal
+      <ConfirmModal
         title="Are you sure?"
         paragraph="Please press continue to submit or cancel to return to your quiz"
         onContinue={() => {
@@ -89,7 +89,7 @@ export default function QuizQuestion({
         }}
         onCancel={setShowSubmitModal}
         isOpen={showSubmitModal}
-      /> */}
+      />
       <div className="px-4 pb-2 border-b-[5px] border-[#A934F1]">
         <div className="flex flex-col sm:flex-row space-y-5 sm:space-y-0 justify-between sm:items-center font-bold text-md">
           <h1>{getQuizSessionQuery.data?.quiz.title}</h1>
@@ -220,6 +220,7 @@ export default function QuizQuestion({
               alignItems: "center",
               width: "50px",
               height: "50px",
+              cursor: "pointer",
               border:
                 index === selectedQuestionIndex
                   ? "2px solid blue"
