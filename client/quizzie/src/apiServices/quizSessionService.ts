@@ -3,36 +3,51 @@ import { AxiosResponse } from "axios";
 
 type QuizResultsResponse = {
   results: {
-    results: QuizSessionGetAll[];
+    results: QuizSessionDto[];
     totalCount: number;
     page: number;
     pageSize: number;
   };
 };
 
-export type QuizSessionGetAll = {
+export interface QuizSessionDto {
   id: string;
   startTime: string;
   endTime: string;
   isCompleted: boolean;
-  totalQuestions: number | null;
-  score: number | null;
+  totalQuestions: null | number;
+  score: null | number;
   createdAt: string;
   updatedAt: string;
-  quiz: null;
+  quiz: {
+    id: string;
+    title: string;
+    description: string;
+    instructions: string;
+    duration: number;
+    createdAt: string;
+    updatedAt: string;
+    isActive: boolean;
+    category: null; // Change the type if category can have properties
+    categoryId: string;
+    user: null; // Change the type if user can have properties
+    userId: string;
+    questions: null; // Change the type if questions can have properties
+  };
   quizId: string;
   user: {
     id: string;
     firstName: string;
     lastName: string;
     email: string;
+    passwordHash: string;
     role: string;
     createdAt: string;
     updatedAt: string;
   };
   userId: string;
-  userAnswers: null | any[];
-};
+  userAnswers: null; // Change the type if userAnswers can have properties
+}
 
 type UserQuizOption = {
   id: string;
@@ -87,7 +102,7 @@ export type UserAnswer = {
   questionId: string;
 };
 
-type QuizResult = {
+export type QuizResult = {
   id: string;
   startTime: string;
   endTime: string;

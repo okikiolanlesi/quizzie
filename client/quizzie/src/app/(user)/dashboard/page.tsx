@@ -3,6 +3,7 @@ import Loader from "@/components/Loader";
 import { PaginationCustom } from "@/components/Pagination";
 import QuizCard from "@/components/QuizCard";
 import SearchBar from "@/components/SearchBar";
+import WelcomeBanner from "@/components/WelcomeBanner";
 import {
   Select,
   SelectContent,
@@ -10,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
+import useAuth from "@/hooks/useAuth";
 import useCategories from "@/hooks/useCategory";
 import useQuiz from "@/hooks/useQuiz";
 import React, { useState } from "react";
@@ -19,7 +20,7 @@ const UserDashboard = () => {
   const [category, setCategory] = useState<string>();
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>();
-
+  const { user } = useAuth();
   const { GetQuizzes } = useQuiz();
   const { GetCategories } = useCategories();
 
@@ -33,6 +34,14 @@ const UserDashboard = () => {
 
   return (
     <div>
+      <div className="mb-5">
+        <WelcomeBanner
+          title={"Hi " + user?.firstName}
+          desc=" Embark on a Journey of Knowledge Exploration with Our Extensive
+            Collection of Interactive Quizzes."
+        />
+      </div>
+
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 ">
         <input
           type="text"
@@ -64,13 +73,16 @@ const UserDashboard = () => {
           Oops, seems we don&apos;t have what you&apos;re looking for
         </h1>
       ) : (
-        <div className="grid grid-flow-row-dense grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-          {getQuizzesQuery.data?.results.map((quiz) => (
+        <div className="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+          {getQuizzesQuery.data?.results.map((quiz, index) => (
             <QuizCard
               key={quiz.id}
-              quizName={quiz.title}
-              quizPicture="https://th.bing.com/th/id/R.f9fad17ce2f232a4e5ef2e5d91a1bdcc?rik=%2fyZXX2VBzA5chQ&pid=ImgRaw&r=0"
-              quizId={quiz.id}
+              quiz={quiz}
+              backgroundGradient={
+                (index + 1) % 2 == 0
+                  ? "linear-gradient(180deg, #C66AFE 0%, #0F6DC2 100%)"
+                  : "linear-gradient(180deg, #061F36 0%, #0F6DC2 100%)"
+              }
             />
           ))}
         </div>

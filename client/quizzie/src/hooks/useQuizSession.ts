@@ -8,6 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface GetQuizSessionParams {
@@ -19,6 +20,7 @@ interface GetQuizSessionParams {
 
 const useQuizSession = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const GetQuizSessions = (params: GetQuizSessionParams) => {
     return useQuery({

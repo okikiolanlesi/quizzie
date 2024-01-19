@@ -6,6 +6,7 @@ import { object, ref, string } from "yup";
 import TextInput from "@/components/TextInput";
 import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
+import Loader from "@/components/Loader";
 
 function SignUp() {
   const { signUpMutation } = useAuth();
@@ -128,9 +129,9 @@ function SignUp() {
               disabled={!formik.isValid || signUpMutation.isPending}
               className={` text-white font-bold py-2 px-3 rounded-full ${
                 formik.isValid ? "bg-blue" : "bg-disabled"
-              }`}
+              } ${signUpMutation.isPending ? " bg-disabled" : null}`}
             >
-              Submit
+              {signUpMutation.isPending ? <Loader size="xs" /> : "Submit"}
             </button>
           </form>
           <p className="mt-3">

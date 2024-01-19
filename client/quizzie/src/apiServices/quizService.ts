@@ -20,7 +20,7 @@ interface User {
   updatedAt: string;
 }
 
-interface Quiz {
+export interface Quiz {
   id: string;
   title: string;
   description: string;
