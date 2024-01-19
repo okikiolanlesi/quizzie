@@ -203,6 +203,15 @@ public class QuizController : ControllerBase
         return Ok(new { message = "Quiz enabled successfully" });
     }
 
+    /// <summary>
+    /// Starts a quiz session for the authenticated user with the specified quiz ID.
+    /// </summary>
+    /// <param name="id"> The unique identifier of the quiz to start.</param>
+    /// <returns>
+    /// <response code="200"> Ok: If the quiz session is started successfully, along with the details of the newly started quiz session.</response>
+    /// <response code="400"> Bad Request: If the quiz is invalid, not active, or the user already has an ongoing session for the same quiz.</response>
+    /// <response code="500"> Internal Server Error: If there is an issue while starting the quiz session or saving changes.</response>
+    /// </returns>
     [HttpPost]
     [Authorize(Roles = "User")]
     [Route("start/{id:Guid}")]

@@ -23,22 +23,39 @@ public class UserController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Retrieves the profile details of a user with the specified ID.
+    /// </summary>
+    /// <param name="id"> The unique identifier of the user whose profile is being retrieved.</param>
+    /// <returns>
+    /// <response code="200"> Ok: If the user profile is successfully retrieved.</response>
+    /// <response code="404"> Not Found: If the user with the specified ID does not exist.</response>
+    /// </returns>
     [HttpGet("{id:Guid}")]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<UserDto>> GetUserProfile(Guid id)
     {
+        // Retrieve the user based on the provided ID
         var user = await _userRepository.GetById(id);
 
         return Ok(_mapper.Map<UserDto>(user));
     }
 
+    /// <summary>
+    /// Retrieves the profile details of the currently authenticated user.
+    /// </summary>
+    /// <returns>
+    /// <response code="200"> Ok: If the user profile is successfully retrieved.</response>
+    /// <response code="404"> Not Found: If the authenticated user does not exist.</response>
+    /// </returns>
     [HttpGet]
     [Authorize]
     public async Task<ActionResult<UserDto>> GetLoggedInUserProfile()
     {
-
+        // Get the user ID from the claims
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        // Retrieve the user based on the user ID
         var user = await _userRepository.GetById(Guid.Parse(userId));
 
         return Ok(_mapper.Map<UserDto>(user));

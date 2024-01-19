@@ -33,8 +33,15 @@ public class QuizSessionController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Retrieves quiz sessions for the authenticated user.
+    /// </summary>
+    /// <param name="searchParams">The search parameters for filtering quiz session.</param>
+    /// <returns>
+    /// <response code="200">Ok: If the quiz session are successfully retrieved.</response>
+    /// </returns>
     [HttpGet]
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User")] 
     public async Task<ActionResult> GetQuizSessions([FromQuery] QuizSessionSearchParams searchParams)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -55,6 +62,15 @@ public class QuizSessionController : ControllerBase
         return Ok(new { results = quizSessionPayload });
     }
 
+    /// <summary>
+    /// Gets quiz session details by the unique id.
+    /// </summary>
+    /// <param name="id">The unique identifier of the quiz session.</param>
+    /// <returns>
+    /// <response code="200">Ok: If the quiz session is successfully retrieved.</response>
+    /// <response code="400">Bad Request: If the user is not authorized to view the quiz session.</response>
+    /// <response code="404">Not Found: If the user is not authorized to view the quiz session.</response>
+    /// </returns>
     [HttpGet]
     [Authorize(Roles = "Admin,User")]
     [Route("{id:Guid}")]
@@ -64,9 +80,16 @@ public class QuizSessionController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-
+        // Retrieve the quiz session based on the provided Id
         var quizSession = await _quizSessionRepository.GetById(id);
 
+        // Check if the quiz session is not valid
+        if (quizSession == null)
+        {
+            return NotFound("Quiz session not found");
+        }
+
+        // Check if the user is not an admin and is not the owner of the quiz session
         if (userRole != "Admin" && Guid.Parse(userId) != quizSession.UserId)
         {
             return BadRequest(new
@@ -75,9 +98,21 @@ public class QuizSessionController : ControllerBase
             });
         }
 
+
+        // Return 200 Ok with the retrieved quiz session details
         return Ok(new { results = quizSession });
     }
 
+    /// <summary>
+    /// Handles the submission of answers to questions for a specific quiz session.
+    /// </summary>
+    /// <param name="quizSessionId">The unique identifier of the quiz session.</param>
+    /// <param name="answerDto">The data transfer object containing answer details.</param>
+    /// <returns>
+    /// <response code="200">Ok: If the answer is successfully submitted or updated.</response>
+    /// <response code="400">Bad Request: If the quiz session is invalid, completed, or has passed the end time, or if the user is not the owner of the quiz session.</response>
+    /// <response code="400">Bad Request: If the question or option is invalid.</response>
+    /// </returns>
     [HttpPost]
     [Authorize(Roles = "User")]
     [Route("answer/{quizSessionId:Guid}")]
@@ -157,6 +192,15 @@ public class QuizSessionController : ControllerBase
         return Ok(new { result = _mapper.Map<QuizSessionDto>(refetchedQuizSession) });
     }
 
+    /// <summary>
+    /// Submits a quiz session for a user.
+    /// </summary>
+    /// <param name="quizSessionId">The unique quiz session id to be submitted.</param>
+    /// <returns> 
+    /// <response code="200">Ok: If the quiz session is successfully submitted.</response>
+    /// <response code="400">Bad Request: If the quiz session is invalid, completed, or has passed the end time.</response>
+    /// <response code="400">Bad Request: If the user attempting to submit the quiz is not the owner of the quiz session.</response>
+    /// </returns>
     [HttpPost]
     [Authorize(Roles = "User")]
     [Route("submit/{quizSessionId:Guid}")]
@@ -193,8 +237,6 @@ public class QuizSessionController : ControllerBase
 
         return Ok(new { result = _mapper.Map<QuizSessionDto>(quizSession) });
     }
-
-
     private async Task MarkQuizSessions(List<QuizSession> quizSessions)
     {
         if (quizSessions.Count < 1) return;

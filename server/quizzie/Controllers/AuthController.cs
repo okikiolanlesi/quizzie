@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -32,6 +33,14 @@ public class AuthController : ControllerBase
         _emailService = emailService;
     }
 
+    /// <summary>
+    /// Registers a new user with the provided registration details
+    /// </summary>
+    /// <param name="registerDto">The data transfer object containing user registration details.</param>
+    /// <returns>
+    /// <response code="200"> Ok: If the user is registered successfully.</response>
+    /// <response code="400"> Bad Request: If there is a password mismatch or if the user already exists with the provided email.</response>
+    /// </returns>
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
     {
@@ -44,7 +53,7 @@ public class AuthController : ControllerBase
             message = "Password mismatch"
         });
 
-        // Checking if user doesn't already exists with that email
+        // Checking if a user doesn't already exists with that email
         var isAlreadyExists = await _userRepository.GetByEmail(registerDto.Email);
 
         if (isAlreadyExists is not null)
@@ -69,7 +78,7 @@ public class AuthController : ControllerBase
         // Sending welcome mail to newly registered user
         try
         {
-            await _emailService.SendHtmlEmailAsync(user.Email, "Welcome to Quizzie", "Welcome", new { Name = user.FirstName + " " + user.LastName });
+            await _emailService.SendHtmlEmailAsync(user.Email, "Welcome to Quizzard", "Welcome", new { Name = user.FirstName + " " + user.LastName });
         }
         catch (Exception e)
         {
@@ -90,12 +99,72 @@ public class AuthController : ControllerBase
         });
     }
 
+    /*
+    [HttpPost("RegisterAdmin")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> RegisterAdmin([FromBody] RegisterAdminDto registerAdminDto)
+    {
+        // Checking if a user already exists with that email
+        var AlreadyExists = await _userRepository.GetByEmail(registerAdminDto.Email);
+
+        if (AlreadyExists != null)
+        {
+            return BadRequest(new
+            {
+                message = "User already exists"
+            });
+        }
+        registerAdminDto.Password = registerAdminDto.LastName.ToLower();
+        var admin = _mapper.Map<Admin>(registerAdminDto);
+
+        //Making user an admin
+        admin.Role = Role.Admin;
+
+        // Saving user
+        _userRepository.Add(admin);
+
+        var result = await _userRepository.SaveChangesAsync();
+
+        // Sending welcome mail to newly registered user
+        try
+        {
+            await _emailService.SendHtmlEmailAsync(admin.Email, "Welcome to Quizzard", "Welcome", new { Name = admin.FirstName + " " + admin.LastName } + " " + "Your password is your Last name in lower letters");
+        }
+        catch (Exception e) 
+        {
+            System.Console.WriteLine(e);
+            System.Console.WriteLine("Failed to send welcome email");
+        }
+        if (!result)
+        {
+            return Problem("Something went wrong");
+        }
+
+        //create new JWT token
+        string token = CreateToken(admin);
+
+        return Ok(new
+        {
+            message = "Admin registered successfully",
+            user = _mapper.Map<AdminDto>(admin),
+            token
+        });*/
+
+    /// <summary>
+    /// Logs in a user with the provided credentials.
+    /// </summary>
+    /// <param name="loginDto"> The data transfer object containing user login credentials.</param>
+    /// <returns>
+    /// <response code="200"> Ok: If the login is successful, along with the JWT token and user details.</response>
+    /// <response code="400"> Bad Request: "If the provided credentials are invalid.</response>
+    /// </returns>
     [HttpPost("login")]
     public async Task<ActionResult> Login(LoginDto loginDto)
     {
-
+        // Retrieve the user from the repository based on the provided email
         var user = await _userRepository.GetByEmail(loginDto.Email);
 
+        // Return 400 Bad Request if the user does not exist
         if (user is null)
         {
             return BadRequest(new
@@ -118,6 +187,7 @@ public class AuthController : ControllerBase
 
         var userdto = _mapper.Map<UserDto>(user);
 
+        // Return 200 OK with the login success message, JWT token, and user details
         return Ok(new
         {
             message = "Login successfull"
