@@ -220,6 +220,7 @@ export default function QuizQuestion({
               alignItems: "center",
               width: "50px",
               height: "50px",
+              cursor: "pointer",
               border:
                 index === selectedQuestionIndex
                   ? "2px solid blue"
