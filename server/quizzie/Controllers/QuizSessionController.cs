@@ -168,7 +168,7 @@ public class QuizSessionController : ControllerBase
         var quizSession = await _quizSessionRepository.GetById(quizSessionId);
 
 
-        if (quizSession == null || quizSession.IsCompleted || quizSession.EndTime <= DateTime.UtcNow)
+        if (quizSession == null || quizSession.IsCompleted)
         {
 
             return BadRequest(new

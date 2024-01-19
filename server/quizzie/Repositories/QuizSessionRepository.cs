@@ -42,11 +42,11 @@ public class QuizSessionRepository : IQuizSessionRepository
             QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow),
             _ => query
         };
+
+        query = query.Where(x => x.UserId == userId).Include(x => x.Quiz).OrderByDescending(x => x.UpdatedAt);
         var count = query.Count();
+        var results = await query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize).ToListAsync();
 
-        query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
-
-        var results = await query.Where(x => x.UserId == userId).OrderByDescending(x => x.UpdatedAt).ToListAsync();
         return new PagedResponse<List<QuizSession>>
         {
             results = results,
