@@ -12,7 +12,7 @@ export const userRoutes = [
   {
     id: 2,
     label: "My Quizzes",
-    route: "/dashboard",
+    route: "/my-quizzes",
     icon: <MdOutlineQuiz />,
   },
   {

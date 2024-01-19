@@ -78,6 +78,127 @@ async function getData(): Promise<Quiz[]> {
       updatedAt: "today",
       status: "enabled",
     },
+    {
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },{
+      id: "728ed52f",
+      quizName: "bags",
+      createdAt: "today",
+      updatedAt: "today",
+      status: "enabled",
+    },
 
     // ...
   ]
@@ -88,13 +209,7 @@ async function CreateQuiz() {
    
   return (
     <div>
-        <div className="flex flex-end">
-            <Button className="bg-purple font-bold h-10 w-30 border p-2 rounded-lg items-center bottom-20">
-                 Create Quiz
-            </Button>
-            <SearchBar />
-        </div>
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto py-3">
         <DataTable columns={Columns} data={data} />
       </div>
       <Table>

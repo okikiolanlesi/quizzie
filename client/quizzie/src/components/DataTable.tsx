@@ -70,13 +70,16 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter quizzes..."
-          value={(table?.getColumn("quiz")?.getFilterValue() as string) ?? ""} // Confirm parameter name
+          value={(table.getColumn("quiz")?.getFilterValue() as string) ?? ""} // Confirm parameter name
           onChange={(event) =>
             table.getColumn("quiz")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <DropdownMenu>
+        <Button className="bg-purple font-bold h-10 w-30 border p-2 rounded-lg items-center ml-auto">
+              Create Quiz
+        </Button>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns
@@ -103,7 +106,7 @@ export function DataTable<TData, TValue>({
                 )
               })}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
       <div className="rounded-md border">
         <Table>

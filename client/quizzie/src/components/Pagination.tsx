@@ -37,7 +37,6 @@ export function PaginationCustom({
 
   const pages = useMemo(getPages, [activePage, totalPages]);
 
-  console.log({ pages, activePage, totalPages });
   return (
     <Pagination>
       <PaginationContent className="flex-wrap">
@@ -57,7 +56,7 @@ export function PaginationCustom({
           </PaginationItem>
         )}
         {pages.map((page) => (
-          <PaginationItem onClick={() => onSelectPage(page)}>
+          <PaginationItem key={page} onClick={() => onSelectPage(page)}>
             <PaginationLink isActive={activePage == page} href="#">
               {page}
             </PaginationLink>

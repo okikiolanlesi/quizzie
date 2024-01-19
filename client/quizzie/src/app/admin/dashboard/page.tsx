@@ -5,32 +5,43 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const AdminDashboard = () => {
   return (
     <div>
-      <h1>Admin Dashboard</h1>
-      <div dir="rtl">
-        <div className="border-spacing-5 w-full">
-          <div dir="ltr" className="flex border-black h-50 w-50">
-            <div className="flex border-black h-50 w-50">
-              <Avatar>
+      <div className="ml-auto py-2 px-3">
+        <div className="flex grid-cols-2 border-spacing-5 ml-auto">
+            <div className="bg-purple w-full justify-between rounded-lg py-5 px-2">
+              <Avatar className="h-20 w-20">
                 <AvatarImage
                   src="https://thewowstyle.com/wp-content/uploads/2015/01/images-of-nature-4.jpg"
                   alt="User avatar"
                 />
                 {/* <AvatarFallback initials="FL" /> */}
               </Avatar>
+              <div>
+                Placeholder Name
+              </div>
+              <div>
+                Some email address
+              </div>
+              <div>
+                Some role
+              </div>
+              <Button className="bg-blue font-bold flex items-center h-10 w-full border p-2 rounded-lg">
+                Edit Profile
+              </Button>
             </div>
+          <div className="ml-auto ">
+            <Button className="bg-blue font-bold h-20 w-56 border p-2 rounded-lg items-center">
+              Create Quiz
+            </Button>
+            <Button className="bg-blue font-bold flex items-center h-20 w-56 border p-2 rounded-lg">
+              View Quizzes
+            </Button>
+            <Button className="bg-blue font-bold flex items-center h-20 w-56 border p-2 rounded-lg">
+              View Users
+            </Button>
+            <Button className="bg-blue font-bold flex items-center h-20 w-56 border p-2 rounded-lg">
+              Update Quiz
+          </Button>
           </div>
-          <Button className="bg-purple font-bold h-20 w-56 border p-2 rounded-lg items-center">
-            Create Quiz
-          </Button>
-          <Button className="bg-purple font-bold flex items-center h-20 w-56 border p-2 rounded-lg">
-            View Quizzes
-          </Button>
-          <Button className="bg-purple font-bold flex items-center h-20 w-56 border p-2 rounded-lg">
-            View Users
-          </Button>
-          <Button className="bg-purple font-bold flex items-center h-20 w-56 border p-2 rounded-lg">
-            Update Quiz
-          </Button>
         </div>
       </div>
     </div>
