@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +15,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Quizzie.Data;
 using Quizzie.Repositories;
+using Quizzie.RequestHelpers;
 using Quizzie.Services;
 using Quizzie.Validators;
 using Swashbuckle.AspNetCore.Filters;
@@ -51,8 +55,11 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
+
         options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-    }); ;
+    });
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -63,6 +70,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                {
+                    context.Response.Headers.Append("Token-Expired", "true");
+                }
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                context.Response.WriteAsync(JsonConvert.SerializeObject(new
+                {
+                    message = "Unauthorized"
+                }));
+                return Task.CompletedTask;
+            }
+        };
+
     });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -15,7 +15,19 @@ namespace Quizzie.RequestHelpers
             CreateMap<CreateOrUpdateCategoryDto, Category>().ReverseMap();
             CreateMap<CategoryDto, Category>().ReverseMap();
             CreateMap<QuizDto, Quiz>().ReverseMap();
+            CreateMap<QuizCategoryDto, Category>();
+            CreateMap<UserOptionDto, Option>();
+
+            CreateMap<QuestionDto, Question>()
+               .ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Options));
             CreateMap<Quiz, UserQuizDetailDto>()
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+            CreateMap<UserQuizDetailDto, Quiz>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
@@ -32,7 +44,6 @@ namespace Quizzie.RequestHelpers
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.Quizzes, opt => opt.MapFrom(src => src.Quizzes));
 
-
             CreateMap<Category, QuizCategoryDto>();
             CreateMap<Quiz, CategoryQuiz>();
             CreateMap<Question, QuestionDto>()
@@ -46,7 +57,10 @@ namespace Quizzie.RequestHelpers
             CreateMap<QuizSessionAnswerDto, Answer>().ReverseMap();
             CreateMap<QuizSessionOptionDto, Option>().ReverseMap();
             CreateMap<QuizSessionQuestionDto, Question>().ReverseMap();
-            CreateMap<QuizSessionDto, QuizSession>().ReverseMap();
+            CreateMap<QuizSessionDto, QuizSession>()
+                .ForMember(dest => dest.Quiz, opt => opt.MapFrom(src => src.Quiz));
+            CreateMap<QuizSession, QuizSessionDto>()
+                .ForMember(dest => dest.Quiz, opt => opt.MapFrom(src => src.Quiz));
 
             CreateMap<Quiz, GetAllQuizDto>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))

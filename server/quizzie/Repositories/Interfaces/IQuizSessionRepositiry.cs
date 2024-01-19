@@ -20,5 +20,5 @@ public interface IQuizSessionRepository
     Task<bool> SaveChangesAsync();
 
     void MarkAsModified(QuizSession quizSession);
-
+    Task<QuizSession> GetUserOngoingSessionForAQuiz(Guid userId, Guid quizId);
 }

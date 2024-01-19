@@ -2,12 +2,15 @@
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import useQuiz from "@/hooks/useQuiz";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 export default function Instruction({
   params,
 }: {
   params: { quizId: string };
 }) {
-  const { GetAQuiz } = useQuiz();
+  const router = useRouter();
+  const { GetAQuiz, StartQuiz } = useQuiz();
 
   const { isLoading, data, isError } = GetAQuiz(params.quizId);
 
@@ -25,30 +28,44 @@ export default function Instruction({
   return (
     <section className="w-full mt-2 ">
       <div className="w-full flex justify-center items-center max-h-28 overflow-hidden gap-6">
-        <img
-          className="w-full h-full object-cover"
-          src="https://img.freepik.com/free-photo/stock-market-exchange-economics-investment-graph_53876-167143.jpg?size=626&ext=jpg&ga=GA1.2.212456353.1696925456&semt=ais"
+        <Image
+          className="w-full h-full object-cover self-center"
+          src="https://th.bing.com/th/id/R.fdc244c2603d3db1bc44b215bf1f9835?rik=6YecZxhgVB2uAQ&pid=ImgRaw&r=0"
           alt=""
+          width={100}
+          height={100}
+          unoptimized
         />
       </div>
       <div className="flex flex-col space-y-6 justify-center items-center border-b-2 py-5 w-full  ">
-        <h5 className="font-bold text-center text-4xl">{data?.title}</h5>
-        <p className="text-center font-light">{data?.description}</p>
+        <h5 className="font-bold text-center text-4xl">{data?.result.title}</h5>
+        <p className="text-center font-light">{data?.result.description}</p>
       </div>
       <div>
         <h5 className="text-xl font-medium text-center mt-6">{}</h5>
         <p className="text-center font-light">
-          <span className="font-bold">Total Time:</span> {data?.duration}{" "}
+          <span className="font-bold">Total Time:</span> {data?.result.duration}{" "}
           Minutes
         </p>
         <p className="text-center font-light">
           <span className="font-bold">Total Questions:</span>{" "}
-          {data?.questions.length}
+          {data?.result.questions.length}
         </p>
         <h5 className="font-bold text-xl text-center mt-6">INSTRUCTION</h5>
-        <p className="my-6">{data?.instructions}</p>
-        <div className="flex justify-center items-center">
-          <Button>Start Quiz</Button>
+        <p className="my-6">{data?.result.instructions}</p>
+        <div className="flex justify-center items-center ">
+          <Button
+            onClick={() => {
+              if (data?.ongoingSession) {
+                router.push(`/questions/${data?.ongoingSession.id}`);
+              } else {
+                StartQuiz.mutate(data?.result.id!);
+              }
+            }}
+            className="bg-blue hover:bg-white hover:text-deepBlue hover:border-2 hover:border-deepBlue"
+          >
+            {!data?.ongoingSession ? "Start" : "Resume"} Quiz
+          </Button>
         </div>
       </div>
     </section>

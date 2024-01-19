@@ -41,10 +41,10 @@ public class QuizRepository : IQuizRepository
 
         }
 
-        var count = query.Count();
 
-        query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
-        var result = await query.Include(x => x.Category).OrderByDescending(x => x.UpdatedAt).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
+        query = query.Include(x => x.Category).OrderByDescending(x => x.UpdatedAt);
+        var count = query.Count();
+        var result = await query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
         var payload = new PagedResponse<List<GetAllQuizDto>>
         {
             results = result,

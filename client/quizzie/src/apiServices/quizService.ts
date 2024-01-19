@@ -20,7 +20,7 @@ interface User {
   updatedAt: string;
 }
 
-interface Quiz {
+export interface Quiz {
   id: string;
   title: string;
   description: string;
@@ -71,6 +71,66 @@ type QuizDetail = {
   isActive: boolean;
 };
 
+type QuizDetailResponse = {
+  result: QuizDetail;
+  ongoingSession: null | {
+    id: string;
+    startTime: string;
+    endTime: string;
+    isCompleted: boolean;
+    totalQuestions: number | null;
+    score: number | null;
+    createdAt: string;
+    updatedAt: string;
+    quiz: null;
+    quizId: string;
+    user: null;
+    userId: string;
+    userAnswers: any[];
+  };
+};
+
+type StartQuizResponse = {
+  message: string;
+  result: {
+    id: string;
+    startTime: string;
+    endTime: string;
+    isCompleted: boolean;
+    totalQuestions: number | null;
+    score: number | null;
+    createdAt: string;
+    updatedAt: string;
+    quiz: {
+      id: string;
+      title: string;
+      description: string;
+      instructions: string;
+      duration: number;
+      createdAt: string;
+      updatedAt: string;
+      user: null;
+      userId: string;
+      category: null;
+      categoryId: string;
+      questions: any[]; // You might want to replace 'any[]' with the actual type of your questions array
+      isActive: boolean;
+    };
+    quizId: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      role: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+    userId: string;
+    userAnswers: any[]; // You might want to replace 'any[]' with the actual type of your userAnswers array
+  };
+};
+
 class QuizService {
   static getAll = async (queryParams: {
     searchTerm?: string;
@@ -83,8 +143,14 @@ class QuizService {
 
   static getOne = async (
     quizId: string
-  ): Promise<AxiosResponse<QuizDetail>> => {
+  ): Promise<AxiosResponse<QuizDetailResponse>> => {
     return await axiosConfig.get(`quiz/${quizId}`);
+  };
+
+  static startQuiz = async (
+    quizId: string
+  ): Promise<AxiosResponse<StartQuizResponse>> => {
+    return await axiosConfig.post(`quiz/start/${quizId}`);
   };
 }
 
