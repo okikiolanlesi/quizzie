@@ -11,6 +11,15 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import QuizTimer from "@/components/QuizTimer";
 import ConfirmModal from "@/components/ConfirmModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface IAnswerMap {
   [key: string]: UserAnswer;
@@ -30,7 +39,8 @@ export default function QuizQuestion({
   const router = useRouter();
   const [answers, setAnswers] = useState<IAnswerMap>({});
   const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false);
-  const [submit, setSubmit] = useState<boolean>();
+  const [submit, setSubmit] = useState<boolean>(false);
+  const [showResult, setShowResult] = useState<boolean>(false);
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number>(
     getCurrentQuestionIndex(params.quizSessionId)
@@ -61,9 +71,14 @@ export default function QuizQuestion({
   }, [getQuizSessionQuery.data]);
 
   useEffect(() => {
-    if (submit) {
-      SubmitQuizSession.mutate(params.quizSessionId);
-    }
+    const submitQuiz = async () => {
+      if (submit) {
+        await SubmitQuizSession.mutateAsync(params.quizSessionId);
+        setShowResult(true);
+      }
+    };
+
+    submitQuiz();
   }, [submit, params.quizSessionId]);
 
   if (getQuizSessionQuery.isLoading || SubmitQuizSession.isPending) {
@@ -83,8 +98,9 @@ export default function QuizQuestion({
       <ConfirmModal
         title="Are you sure?"
         paragraph="Please press continue to submit or cancel to return to your quiz"
-        onContinue={() => {
-          SubmitQuizSession.mutate(params.quizSessionId);
+        onContinue={async () => {
+          await SubmitQuizSession.mutateAsync(params.quizSessionId);
+          setShowResult(true);
           setShowSubmitModal(false);
         }}
         onCancel={setShowSubmitModal}
@@ -247,6 +263,58 @@ export default function QuizQuestion({
             {index + 1}
           </div>
         ))}
+
+        <Dialog
+          open={showResult}
+          onOpenChange={(val: boolean) => {
+            router.push("/dashboard");
+            setShowResult(val);
+          }}
+        >
+          {/* <DialogTrigger>Open</DialogTrigger> */}
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Here are your quiz results?</DialogTitle>
+              <DialogDescription>
+                <p>
+                  Total Questions:{" "}
+                  {SubmitQuizSession.data?.result.totalQuestions}
+                </p>
+                <p>
+                  Total Answered:{" "}
+                  {SubmitQuizSession.data?.result.userAnswers.length}
+                </p>
+                <p>Total Correct: {SubmitQuizSession.data?.result.score}</p>
+                <p>
+                  Percentage:{" "}
+                  {SubmitQuizSession.data?.result.totalQuestions === 0
+                    ? "100%"
+                    : (
+                        (SubmitQuizSession.data?.result.score! /
+                          SubmitQuizSession.data?.result.totalQuestions!) *
+                        100
+                      ).toFixed(2) + "%"}
+                </p>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <div className=" flex flex-col sm:flex-row space-x-0 sm:space-x-4 space-y-4 sm:space-y-0">
+                <Button
+                  className="bg-blue"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  Go Home
+                </Button>
+                <Button
+                  className="bg-blue"
+                  onClick={() => router.push("/my-quizzes")}
+                >
+                  Go to results page
+                </Button>
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );

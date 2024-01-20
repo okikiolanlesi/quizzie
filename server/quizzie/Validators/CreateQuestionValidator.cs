@@ -14,7 +14,7 @@ namespace Quizzie.Validators
                 .MaximumLength(300);
             // Create a rule for each item in the collection
             RuleForEach(x => x.Options)
-                .SetValidator(new CreateOrUpdateOptionValidator()); 
+                .SetValidator(new CreateOrUpdateOptionValidator());
         }
     }
 }

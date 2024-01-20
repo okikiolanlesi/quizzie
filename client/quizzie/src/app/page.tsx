@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-  console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
   return (
     <main className="bg-blue min-h-[100vh] w-full py-8">
       <Navbar />
