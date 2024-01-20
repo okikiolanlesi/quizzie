@@ -55,11 +55,9 @@ export default function Instruction({
         </p>
         <h5 className="font-bold text-xl text-center mt-6">INSTRUCTION</h5>
         <p className="my-6">
-          <Markdown
-            remarkPlugins={[gfm]}
-            className={"markdown"}
-            children={data?.result.instructions!}
-          />
+          <Markdown remarkPlugins={[gfm]} className={"markdown"}>
+            {data?.result.instructions}
+          </Markdown>
         </p>
         <div className="flex justify-center items-center ">
           <Button
