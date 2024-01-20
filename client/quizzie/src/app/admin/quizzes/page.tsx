@@ -20,7 +20,7 @@ import SearchBar from "@/components/SearchBar";
 // Category filter on quizzes/page.tsx
 
 async function getData(): Promise<Quiz[]> {
-  // Fetch data the API here
+  // Fetch data  from the API here
   return [
     {
       id: "728ed52f",
