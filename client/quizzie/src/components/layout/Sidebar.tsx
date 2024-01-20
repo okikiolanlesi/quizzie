@@ -75,7 +75,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             src={"/images/logo/logo.svg"}
             alt="Logo"
           /> */}
-          <p className="text-2xl font-bold text-white">Quizzie</p>
+          <p className="text-2xl font-bold text-white">Quizzard</p>
         </Link>
 
         <button
@@ -109,7 +109,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <ul className="mb-6 flex flex-col gap-1.5">
               {links.map((route) => {
                 return (
-                  <li>
+                  <li key={route.id}>
                     <Link
                       href={route.route}
                       className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-white duration-300 ease-in-out hover:underline"

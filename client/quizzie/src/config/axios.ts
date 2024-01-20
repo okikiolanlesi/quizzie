@@ -1,9 +1,8 @@
-import { useAuthState } from "@/store/authStore";
 import axios from "axios";
 
 const axiosConfig = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-  withCredentials: false,
+  withCredentials: true,
 });
 
 axiosConfig.interceptors.request.use(
@@ -39,7 +38,7 @@ axiosConfig.interceptors.response.use(
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-
+    console.log(error);
     if (
       error.response.status == 401 ||
       error.response?.data?.error === "Not authorized, token failed" ||

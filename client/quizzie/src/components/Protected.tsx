@@ -26,7 +26,7 @@ const Protected = ({
         return notFound();
       }
     }
-  }, []);
+  }, [token, user, user?.role]);
 
   return <div>{children}</div>;
 };

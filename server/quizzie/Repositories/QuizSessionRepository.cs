@@ -33,23 +33,24 @@ public class QuizSessionRepository : IQuizSessionRepository
         var query = _context.QuizSessions.AsQueryable();
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
         {
-            query = query.Where(quizSession => quizSession.Quiz.Title.Contains(searchParams.SearchTerm) || quizSession.Quiz.Description.Contains(searchParams.SearchTerm));
+            query = query.Where(quizSession => quizSession.Quiz.Title.ToLower().Contains(searchParams.SearchTerm.ToLower()) || quizSession.Quiz.Description.ToLower().Contains(searchParams.SearchTerm.ToLower()));
         }
 
         query = searchParams?.Status switch
         {
-            QuizSessionStatus.ongoing => query.Where(x => x.EndTime > DateTime.UtcNow),
-            QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow),
+            QuizSessionStatus.ongoing => query.Where(x => x.EndTime > DateTime.UtcNow && !x.IsCompleted),
+            QuizSessionStatus.completed => query.Where(x => x.EndTime <= DateTime.UtcNow || x.IsCompleted),
             _ => query
         };
 
-        query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
+        query = query.Where(x => x.UserId == userId).Include(x => x.Quiz).OrderByDescending(x => x.UpdatedAt);
+        var count = query.Count();
+        var results = await query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize).ToListAsync();
 
-        var results = await query.Where(x => x.UserId == userId).OrderByDescending(x => x.UpdatedAt).ToListAsync();
         return new PagedResponse<List<QuizSession>>
         {
             results = results,
-            totalCount = query.Count(),
+            totalCount = count,
             page = searchParams.PageNumber,
             pageSize = searchParams.PageSize,
         };
@@ -88,6 +89,10 @@ public class QuizSessionRepository : IQuizSessionRepository
     public async Task<List<QuizSession>> GetEndedSessionsForAUser(Guid userId)
     {
         return await _context.QuizSessions.Where(x => x.EndTime <= DateTime.UtcNow && !x.IsCompleted).ToListAsync();
+    }
+    public async Task<QuizSession> GetUserOngoingSessionForAQuiz(Guid userId, Guid quizId)
+    {
+        return await _context.QuizSessions.FirstOrDefaultAsync(x => x.EndTime >= DateTime.UtcNow && !x.IsCompleted && x.UserId == userId && x.QuizId == quizId);
     }
 }
 

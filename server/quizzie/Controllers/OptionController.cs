@@ -21,6 +21,15 @@ namespace Quizzie.Controllers
             _optionRepository = optionRepository;
         }
 
+        /// <summary>
+        /// Deletes an Option.
+        /// </summary>
+        /// <param name="id">The unique option id to delete.</param>
+        /// <returns>
+        /// <response code="200"> Option is successfully deleted.</response>
+        /// <response code="404">Not Found: Option does not exist.</response>
+        /// <response code="200">Ok: Option has already been deleted.</response>
+        /// </returns>
         [HttpPatch]
         [Authorize(Roles = "Admin")]
         [Route("{id:Guid}")]
