@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Quizzie.DTOs;
 using Quizzie.Models;
@@ -27,6 +28,16 @@ public class QuestionController : ControllerBase
         _optionRepository = optionRepository;
     }
 
+    /// <summary>
+    /// Adds a new question to a quiz with the provided question details.
+    /// </summary>
+    /// <param name="questionDto"> The data transfer object containing question details.</param>
+    /// <param name="quizId"> The unique identifier of the quiz to which the question will be added.</param>
+    /// <returns>
+    /// <response code="200"> Ok: If the question is added successfully.</response>
+    /// <response code="400"> Bad Request: If the quiz with the specified ID does not exist.</response>
+    /// <response code="500"> Internal Server Error: If there is an issue while saving the question or options, or if an exception occurs during the process.</response>
+    /// </returns>
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [Route("{quizId:Guid}")]
@@ -36,8 +47,10 @@ public class QuestionController : ControllerBase
         {
             try
             {
-
+                // Retrieve the quiz based on the provided quiz ID
                 var quiz = await _quizRepository.GetById(quizId);
+
+                // Return 400 Bad Request if the quiz does not exist
                 if (quiz is null)
                 {
                     return BadRequest(new
@@ -45,6 +58,8 @@ public class QuestionController : ControllerBase
                         message = "Quiz does not exist"
                     });
                 }
+
+                // Create a new question entity
                 var newQuestion = new Question
                 {
                     QuestionText = questionDto.QuestionText,
@@ -52,12 +67,14 @@ public class QuestionController : ControllerBase
                     Quiz = quiz
                 };
 
+                // Add the question to the repository and save changes
                 _questionRepository.Add(newQuestion);
                 await _questionRepository.SaveChangesAsync();
 
-
+                // Create a list to hold the options
                 var options = new List<Option>();
 
+                // Map each option DTO to an Option entity and associate it with the new question
                 foreach (var optionDto in questionDto.Options)
                 {
                     var option = _mapper.Map<Option>(optionDto);
@@ -66,6 +83,7 @@ public class QuestionController : ControllerBase
                     options.Add(option);
                 }
 
+                // Add the options to the repository and save changes
                 _optionRepository.AddRange(options);
 
                 var result = await _optionRepository.SaveChangesAsync();
@@ -74,8 +92,11 @@ public class QuestionController : ControllerBase
                 {
                     return Problem(title: "Something went wrong");
                 };
+
+                // Commit the transaction as all operations were successful
                 await transaction.CommitAsync();
 
+                // Return 200 OK with the success message
                 return Ok(new
                 {
                     message = "Question added successfully"
