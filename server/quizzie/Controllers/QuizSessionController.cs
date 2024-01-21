@@ -44,18 +44,23 @@ public class QuizSessionController : ControllerBase
     [Authorize(Roles = "User")] 
     public async Task<ActionResult> GetQuizSessions([FromQuery] QuizSessionSearchParams searchParams)
     {
+        // Get the user ID from the claims
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        // Retrieve the user based on the user ID
         var user = await _userRepository.GetById(Guid.Parse(userId));
 
+        // Get quiz sessions that need marking for the user
         var unMarkedSessions = await _quizSessionRepository.GetEndedSessionsForAUser(Guid.Parse(userId));
 
+        // If there are unmarked sessions, mark and save changes
         if (unMarkedSessions.Count > 0)
         {
             await MarkQuizSessions(unMarkedSessions);
             await _quizSessionRepository.SaveChangesAsync();
         }
 
+        // Retrieve quiz sessions for the user based on search parameters
         var quizSessionPayload = await _quizSessionRepository.GetAllForAUser(user.Id, searchParams);
 
 
@@ -76,8 +81,10 @@ public class QuizSessionController : ControllerBase
     [Route("{id:Guid}")]
     public async Task<ActionResult> GetQuizSessionById(Guid id)
     {
-
+        // Get the user ID from the claims
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // Get the user Role from the claims
         var userRole = User.FindFirstValue(ClaimTypes.Role);
 
         // Retrieve the quiz session based on the provided Id
@@ -118,11 +125,13 @@ public class QuizSessionController : ControllerBase
     [Route("answer/{quizSessionId:Guid}")]
     public async Task<ActionResult> AnswerQuestion([FromRoute] Guid quizSessionId, [FromBody] AnswerQuestionDto answerDto)
     {
-
+        // Get the user ID from the claims
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        // Retrieve the user based on the user ID
         var user = await _userRepository.GetById(Guid.Parse(userId));
 
+        // Retrieve the quiz based on the quiz session ID
         var quizSession = await _quizSessionRepository.GetById(quizSessionId);
 
 
@@ -206,12 +215,13 @@ public class QuizSessionController : ControllerBase
     [Route("submit/{quizSessionId:Guid}")]
     public async Task<ActionResult> SubmitQuizSession([FromRoute] Guid quizSessionId)
     {
-
+        // Get the user ID from the claims
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        // Retrieve the quiz session based on the provided quiz session ID
         var quizSession = await _quizSessionRepository.GetById(quizSessionId);
 
-
+        // Return 400 Bad Request if the quiz session is invalid, completed, or the end time has passed
         if (quizSession == null || quizSession.IsCompleted || quizSession.EndTime <= DateTime.UtcNow)
         {
 
@@ -220,7 +230,7 @@ public class QuizSessionController : ControllerBase
                 message = "Invalid quiz session"
             });
         }
-
+        // Return 400 Bad Request if the user is not authorized to submit
         if (quizSession.UserId != Guid.Parse(userId))
         {
             return BadRequest(new
@@ -229,8 +239,10 @@ public class QuizSessionController : ControllerBase
             });
         }
 
+        // Mark the quiz session as completed and update its details
         await MarkQuizSession(_mapper.Map<QuizSession>(quizSession));
 
+        // Save changes to answer repository
         var result = await _answerRepository.SaveChangesAsync();
 
         if (!result) return Problem("Unable to submit");
