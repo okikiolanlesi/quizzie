@@ -1,14 +1,18 @@
 "use client";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FormError from "@/components/FormError";
 import { object, ref, string } from "yup";
 import TextInput from "@/components/TextInput";
 import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
 import Loader from "@/components/Loader";
+import ConfirmModal from "@/components/ConfirmModal";
+import { useRouter } from "next/navigation";
 
 function SignUp() {
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const router = useRouter();
   const { signUpMutation } = useAuth();
   const validationSchema = object({
     firstName: string().required("Please enter first Name"),
@@ -36,8 +40,23 @@ function SignUp() {
     },
   });
 
+  useEffect(() => {
+    if (signUpMutation.isSuccess) {
+      setShowSuccessModal(true);
+    }
+  }, [signUpMutation.isSuccess]);
+
   return (
     <div className="bg-blue min-h-[100vh] overflow-y-scroll scrollbar-thin">
+      <ConfirmModal
+        title={"You've registered succesfully"}
+        paragraph={
+          "An email has been sent to you, please check and click the verification link to verify your email. After verifying your email, you can proceed to login"
+        }
+        onCancel={() => setShowSuccessModal(false)}
+        onContinue={() => router.push("/dashboard")}
+        isOpen={showSuccessModal}
+      />
       <div className="pad-section bg-white rounded-l-2xl  flex justify-center overflow-y-scroll items-center min-h-[100vh]">
         <div className="w-full">
           <h1 className="text-4xl font-bold my-4">Create Account</h1>
@@ -134,16 +153,24 @@ function SignUp() {
               {signUpMutation.isPending ? <Loader size="xs" /> : "Submit"}
             </button>
           </form>
-          <p className="mt-3">
-            Already a member?{" "}
+          <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 mt-3 justify-between items-center">
+            <p className="">
+              Already a member?{" "}
+              <Link
+                href="/login"
+                className="text-deepBlue font-bold cursor-pointer"
+              >
+                {" "}
+                Login
+              </Link>
+            </p>{" "}
             <Link
-              href="/login"
-              className="text-primary font-bold cursor-pointer"
+              href="/forgot-password"
+              className=" text-deepBlue font-semibold cursor-pointer"
             >
-              {" "}
-              Login
+              Forgot password?
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>

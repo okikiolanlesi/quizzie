@@ -82,19 +82,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                 {
                     context.Response.Headers.Append("Token-Expired", "true");
+                    context.Response.StatusCode = 401;
                 }
                 return Task.CompletedTask;
             },
-            OnChallenge = context =>
+            OnChallenge = async context =>
             {
                 context.HandleResponse();
                 context.Response.StatusCode = 401;
                 context.Response.ContentType = "application/json";
-                context.Response.WriteAsync(JsonConvert.SerializeObject(new
-                {
-                    message = "Unauthorized"
-                }));
-                return Task.CompletedTask;
+                var responseBody = JsonConvert.SerializeObject(new { message = "Unauthorized" });
+                await context.Response.WriteAsync(responseBody);
+                return;
             }
         };
 
@@ -133,11 +132,15 @@ builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 
 var app = builder.Build();
 
+
+
+app.UseCors();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c=>
+    app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Simple Quiz App");
     });
@@ -146,8 +149,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
 app.UseAuthorization();
-app.UseCors();
+
 
 app.MapControllers();
 

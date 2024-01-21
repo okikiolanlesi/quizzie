@@ -9,22 +9,20 @@ import useAuth from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
 
-function Login() {
-  const { loginMutation } = useAuth();
+function ForgotPassword() {
+  const { forgotPasswordMutation } = useAuth();
 
   const validationSchema = object({
     email: string().email("Invalid email address").required("Required"),
-    password: string().required("Please enter a password"),
   });
 
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
     },
     validationSchema,
     onSubmit: (values) => {
-      loginMutation.mutate(values);
+      forgotPasswordMutation.mutate(values);
     },
   });
 
@@ -32,7 +30,7 @@ function Login() {
     <div className="bg-blue min-h-[100vh] overflow-y-scroll scrollbar-thin">
       <div className="pad-section bg-white rounded-l-2xl  flex justify-center overflow-y-scroll items-center min-h-[100vh]">
         <div className="w-full">
-          <h1 className="text-4xl font-bold my-4">Login</h1>
+          <h1 className="text-4xl font-bold my-4">Forgot Password</h1>
 
           <form
             className="flex flex-col space-y-3"
@@ -54,47 +52,34 @@ function Login() {
               ) : null}
             </div>
 
-            <div>
-              <label htmlFor="password">Password</label>
-              <TextInput
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Password"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-              />
-              {formik.touched.password && formik.errors.password ? (
-                <FormError error={formik.errors.password} />
-              ) : null}
-            </div>
             <Button
-              disabled={!formik.isValid || loginMutation.isPending}
+              disabled={!formik.isValid || forgotPasswordMutation.isPending}
               className={` text-white font-bold py-2 px-3 rounded-full ${
                 formik.isValid ? "bg-blue" : "bg-disabled"
-              } ${loginMutation.isPending ? " bg-disabled" : null}`}
+              } ${forgotPasswordMutation.isPending ? " bg-disabled" : null}`}
             >
-              {loginMutation.isPending ? <Loader size="xs" /> : "Submit"}
+              {forgotPasswordMutation.isPending ? (
+                <Loader size="xs" />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </form>
           <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 mt-3 justify-between items-center">
             <p className="">
-              Don&apos;t have an account?{" "}
+              Already have an account?{" "}
               <Link
                 href="/signup"
                 className="text-deepBlue font-bold cursor-pointer"
               >
                 {" "}
-                Sign up
+                Login
               </Link>
             </p>{" "}
             <Link
-              href="/forgot-password"
+              href="#"
               className=" text-deepBlue font-semibold cursor-pointer"
-            >
-              Forgot password?
-            </Link>
+            ></Link>
           </div>
         </div>
       </div>
@@ -102,4 +87,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPassword;

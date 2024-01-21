@@ -54,7 +54,7 @@ public class EmailService : IEmailService
 
         using (var client = new SmtpClient())
         {
-            await client.ConnectAsync("sandbox.smtp.mailtrap.io", 587, false);
+            await client.ConnectAsync("smtp.gmail.com", 465, true);
             await client.AuthenticateAsync(_configuration.GetSection("AppSettings:EmailUsername").Value, _configuration.GetSection("AppSettings:EmailPassword").Value);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);

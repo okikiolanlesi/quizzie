@@ -174,7 +174,7 @@ public class AuthController : ControllerBase
             return Problem("Something went wrong");
         }
 
-        return Ok(new { message = "Email verification successful. You can now log in." });
+        return Ok(new { message = "Email verification successful. You can now log in.", token = CreateJwtToken(user), user = _mapper.Map<UserDto>(user) });
     }
 
     [HttpPost]

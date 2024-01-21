@@ -8,23 +8,28 @@ import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
+import { useSearchParams } from "next/navigation";
 
-function Login() {
-  const { loginMutation } = useAuth();
+function ForgotPassword() {
+  const searchParams = useSearchParams();
+
+  const token = searchParams.get("token");
+
+  const { resetPasswordMutation } = useAuth();
 
   const validationSchema = object({
-    email: string().email("Invalid email address").required("Required"),
-    password: string().required("Please enter a password"),
+    token: string(),
+    newPassword: string().required("Required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      token: token?.toString()!,
+      newPassword: "",
     },
     validationSchema,
     onSubmit: (values) => {
-      loginMutation.mutate(values);
+      resetPasswordMutation.mutate(values);
     },
   });
 
@@ -32,69 +37,56 @@ function Login() {
     <div className="bg-blue min-h-[100vh] overflow-y-scroll scrollbar-thin">
       <div className="pad-section bg-white rounded-l-2xl  flex justify-center overflow-y-scroll items-center min-h-[100vh]">
         <div className="w-full">
-          <h1 className="text-4xl font-bold my-4">Login</h1>
+          <h1 className="text-4xl font-bold my-4">Reset Password</h1>
 
           <form
             className="flex flex-col space-y-3"
             onSubmit={formik.handleSubmit}
           >
             <div>
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">New Password</label>
               <TextInput
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Email"
+                id="newPassword"
+                name="newPassword"
+                type="password"
+                placeholder="New Password"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.email}
+                value={formik.values.newPassword}
               />
-              {formik.touched.email && formik.errors.email ? (
-                <FormError error={formik.errors.email} />
+              {formik.touched.newPassword && formik.errors.newPassword ? (
+                <FormError error={formik.errors.newPassword} />
               ) : null}
             </div>
 
-            <div>
-              <label htmlFor="password">Password</label>
-              <TextInput
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Password"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-              />
-              {formik.touched.password && formik.errors.password ? (
-                <FormError error={formik.errors.password} />
-              ) : null}
-            </div>
             <Button
-              disabled={!formik.isValid || loginMutation.isPending}
+              disabled={!formik.isValid || resetPasswordMutation.isPending}
               className={` text-white font-bold py-2 px-3 rounded-full ${
                 formik.isValid ? "bg-blue" : "bg-disabled"
-              } ${loginMutation.isPending ? " bg-disabled" : null}`}
+              } ${resetPasswordMutation.isPending ? " bg-disabled" : null}`}
             >
-              {loginMutation.isPending ? <Loader size="xs" /> : "Submit"}
+              {resetPasswordMutation.isPending ? (
+                <Loader size="xs" />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </form>
           <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 mt-3 justify-between items-center">
             <p className="">
-              Don&apos;t have an account?{" "}
+              Already have an account?{" "}
               <Link
                 href="/signup"
                 className="text-deepBlue font-bold cursor-pointer"
               >
                 {" "}
-                Sign up
+                Login
               </Link>
             </p>{" "}
             <Link
-              href="/forgot-password"
+              href="#"
               className=" text-deepBlue font-semibold cursor-pointer"
-            >
-              Forgot password?
-            </Link>
+            ></Link>
           </div>
         </div>
       </div>
@@ -102,4 +94,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPassword;
