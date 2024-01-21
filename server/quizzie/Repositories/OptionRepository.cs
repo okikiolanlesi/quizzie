@@ -41,7 +41,7 @@ public class OptionRepository : IOptionRepository
 
     public async Task<Option> GetById(Guid id)
     {
-        return await _context.Options.Include("Question").FirstAsync(x => x.Id == id);
+        return await _context.Options.FirstAsync(x => x.Id == id);
 
     }
 
@@ -50,9 +50,9 @@ public class OptionRepository : IOptionRepository
         return await _context.Options.FirstOrDefaultAsync(x => x.Id == optionId && x.QuestionId == questionId);
     }
 
-    public void MarkAsModified(Option Option)
+    public void MarkAsModified(Option option)
     {
-        throw new NotImplementedException();
+        _context.Entry(option).State = EntityState.Modified;
     }
 
     public async Task<bool> SaveChangesAsync()

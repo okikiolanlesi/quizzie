@@ -10,17 +10,19 @@ using System.Threading.Tasks;
 
 namespace Quizzie.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/option")]
 [ApiController]
 public class OptionController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IOptionRepository _optionRepository;
+    private readonly IQuestionRepository _questionRepository;
 
-    public OptionController(IMapper mapper, IOptionRepository optionRepository)
+    public OptionController(IMapper mapper, IOptionRepository optionRepository, IQuestionRepository questionRepository)
     {
         _mapper = mapper;
         _optionRepository = optionRepository;
+        _questionRepository = questionRepository;
     }
 
     /// <summary>
@@ -58,21 +60,27 @@ public class OptionController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> AddOptions([FromBody] CreateOrUpdateOptionDto createOrUpdateOptionDto)
+    [Route("{questionId:Guid}")]
+    public async Task<IActionResult> AddOption([FromRoute] Guid questionId, [FromBody] CreateOrUpdateOptionDto createOrUpdateOptionDto)
     {
 
-        var existingOption = _mapper.Map<Option>(createOrUpdateOptionDto);
-        var option = await _optionRepository.AddOption(existingOption);
+        var question = await _questionRepository.GetById(questionId);
 
-        if (option != null)
-
+        if (question is null)
         {
             return BadRequest(new
             {
-                message = "Option already exists"
+                message = "Invalid question"
             });
         }
-        return Ok(_mapper.Map<OptionDto>(option));
+        var newOption = _mapper.Map<Option>(createOrUpdateOptionDto);
+
+        newOption.QuestionId = questionId;
+
+        var option = await _optionRepository.AddOption(newOption);
+
+
+        return Ok(option);
 
     }
 
@@ -89,6 +97,16 @@ public class OptionController : ControllerBase
         }
         option.OptionText = createOrUpdateOptionDto.OptionText;
         option.IsCorrect = createOrUpdateOptionDto.isCorrect;
+
+        _optionRepository.MarkAsModified(option);
+
+        var result = await _optionRepository.SaveChangesAsync();
+
+        if (!result)
+        {
+            return Problem("Something went wrong with updating the option");
+        }
+
         return Ok(_mapper.Map<OptionDto>(option));
 
 
