@@ -8,6 +8,7 @@ namespace Quizzie.Repositories;
 public interface IOptionRepository
 {
     Task<Option> GetById(Guid id);
+    Task<Option> GetOptionForQuestionById(Guid optionId, Guid questionId);
     Task<List<Option>> GetAllForAQuestion(Guid questionId);
 
     void Add(Option Option);

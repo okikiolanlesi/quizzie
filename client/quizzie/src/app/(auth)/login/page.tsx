@@ -6,6 +6,8 @@ import { object, ref, string } from "yup";
 import TextInput from "@/components/TextInput";
 import Link from "next/link";
 import useAuth from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import Loader from "@/components/Loader";
 
 function Login() {
   const { loginMutation } = useAuth();
@@ -67,25 +69,33 @@ function Login() {
                 <FormError error={formik.errors.password} />
               ) : null}
             </div>
-            <button
+            <Button
               disabled={!formik.isValid || loginMutation.isPending}
               className={` text-white font-bold py-2 px-3 rounded-full ${
                 formik.isValid ? "bg-blue" : "bg-disabled"
-              }`}
+              } ${loginMutation.isPending ? " bg-disabled" : null}`}
             >
-              Submit
-            </button>
+              {loginMutation.isPending ? <Loader size="xs" /> : "Submit"}
+            </Button>
           </form>
-          <p className="mt-3">
-            Don't have an account?{" "}
+          <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 mt-3 justify-between items-center">
+            <p className="">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/signup"
+                className="text-deepBlue font-bold cursor-pointer"
+              >
+                {" "}
+                Sign up
+              </Link>
+            </p>{" "}
             <Link
-              href="/signup"
-              className="text-primary font-bold cursor-pointer"
+              href="/forgot-password"
+              className=" text-deepBlue font-semibold cursor-pointer"
             >
-              {" "}
-              Sign up
+              Forgot password?
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>

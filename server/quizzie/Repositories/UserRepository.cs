@@ -36,4 +36,20 @@ public class UserRepository : IUserRepository
     {
         _context.Entry(user).State = EntityState.Modified;
     }
+
+    public async Task<User> GetUserByResetToken(string resetToken)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.ResetToken == resetToken);
+    }
+
+    public void DeleteUser(Guid userId)
+    {
+        var userToDelete = _context.Users.Find(userId);
+
+        if (userToDelete != null)
+        {
+            _context.Users.Remove(userToDelete);
+            _context.SaveChanges();
+        }
+    }
 }

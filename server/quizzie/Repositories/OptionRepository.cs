@@ -45,6 +45,11 @@ public class OptionRepository : IOptionRepository
 
     }
 
+    public async Task<Option> GetOptionForQuestionById(Guid optionId, Guid questionId)
+    {
+        return await _context.Options.FirstOrDefaultAsync(x => x.Id == optionId && x.QuestionId == questionId);
+    }
+
     public void MarkAsModified(Option Option)
     {
         throw new NotImplementedException();

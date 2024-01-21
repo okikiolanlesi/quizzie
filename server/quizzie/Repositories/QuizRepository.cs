@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Quizzie.Data;
 using Quizzie.DTOs;
 using Quizzie.Models;
+using Quizzie.RequestHelpers;
 
 namespace Quizzie.Repositories;
 
@@ -26,9 +27,62 @@ public class QuizRepository : IQuizRepository
         _context.Quizzes.Add(quiz);
     }
 
-    public async Task<List<GetAllQuizDto>> GetAll()
+    public async Task<PagedResponse<List<GetAllQuizDto>>> GetAll(QuizSearchParams searchParams)
     {
-        return await _context.Quizzes.Include(x => x.Category).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
+        var query = _context.Quizzes.AsQueryable();
+        if (!string.IsNullOrEmpty(searchParams.SearchTerm))
+        {
+            query = query.Where(quiz => quiz.Title.ToLower().Contains(searchParams.SearchTerm.ToLower()) || quiz.Description.ToLower().Contains(searchParams.SearchTerm.ToLower()));
+        }
+
+        if (!string.IsNullOrEmpty(searchParams.Category.ToString()))
+        {
+            query = query.Where(quiz => quiz.CategoryId == searchParams.Category);
+
+        }
+
+
+        query = query.Include(x => x.Category).OrderByDescending(x => x.UpdatedAt);
+        var count = query.Count();
+        var result = await query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
+        var payload = new PagedResponse<List<GetAllQuizDto>>
+        {
+            results = result,
+            totalCount = count,
+            page = searchParams.PageNumber,
+            pageSize = searchParams.PageSize,
+        };
+        return payload;
+    }
+
+    public async Task<PagedResponse<List<GetAllQuizDto>>> GetAllForUsers(QuizSearchParams searchParams)
+    {
+        var query = _context.Quizzes.AsQueryable();
+        if (!string.IsNullOrEmpty(searchParams.SearchTerm))
+        {
+            query = query.Where(quiz => quiz.Title.ToLower().Contains(searchParams.SearchTerm.ToLower()) || quiz.Description.ToLower().Contains(searchParams.SearchTerm.ToLower()));
+        }
+
+        if (!string.IsNullOrEmpty(searchParams.Category.ToString()))
+        {
+            query = query.Where(quiz => quiz.CategoryId == searchParams.Category);
+
+        }
+
+        var count = query.Count();
+        query = query.Skip((searchParams.PageNumber - 1) * searchParams.PageSize).Take(searchParams.PageSize);
+        query = query.Where(x => x.IsActive);
+        var result = await query.Include(x => x.Category).OrderByDescending(x => x.UpdatedAt).ProjectTo<GetAllQuizDto>(_mapper.ConfigurationProvider).ToListAsync();
+
+        System.Console.WriteLine(count);
+        var payload = new PagedResponse<List<GetAllQuizDto>>
+        {
+            results = result,
+            totalCount = count,
+            page = searchParams.PageNumber,
+            pageSize = searchParams.PageSize,
+        };
+        return payload;
     }
 
     public async Task<Quiz> GetById(Guid id)

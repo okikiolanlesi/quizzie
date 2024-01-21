@@ -17,7 +17,7 @@ namespace Quizzie.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -89,6 +89,9 @@ namespace Quizzie.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsCorrect")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("OptionText")
@@ -195,7 +198,7 @@ namespace Quizzie.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("TotalQuestions")
+                    b.Property<int?>("TotalQuestions")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -225,6 +228,15 @@ namespace Quizzie.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("EmailVerificationToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EmailVerificationTokenExpiration")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
@@ -233,6 +245,12 @@ namespace Quizzie.Migrations
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
+
+                    b.Property<string>("ResetToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResetTokenExpiration")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Role")
                         .IsRequired()

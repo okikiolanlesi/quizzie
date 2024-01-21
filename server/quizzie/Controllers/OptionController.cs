@@ -23,6 +23,15 @@ public class OptionController : ControllerBase
         _optionRepository = optionRepository;
     }
 
+    /// <summary>
+    /// Deletes an Option.
+    /// </summary>
+    /// <param name="id">The unique option id to delete.</param>
+    /// <returns>
+    /// <response code="200"> Option is successfully deleted.</response>
+    /// <response code="404">Not Found: Option does not exist.</response>
+    /// <response code="200">Ok: Option has already been deleted.</response>
+    /// </returns>
     [HttpPatch]
     [Authorize(Roles = "Admin")]
     [Route("{id:Guid}")]
@@ -46,9 +55,9 @@ public class OptionController : ControllerBase
         }
         return Ok(new { message = "Option deleted successfully" });
     }
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
-
     public async Task<IActionResult> AddOptions([FromBody] CreateOrUpdateOptionDto createOrUpdateOptionDto)
     {
 
@@ -56,6 +65,7 @@ public class OptionController : ControllerBase
         var option = await _optionRepository.AddOption(existingOption);
 
         if (option != null)
+
         {
             return BadRequest(new
             {

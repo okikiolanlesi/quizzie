@@ -35,7 +35,7 @@ public class CategoryController : ControllerBase
                 message = "Category already exists with that title"
             });
         }
-
+        
         var category = _mapper.Map<Category>(categoryDto);
 
         _categoryRepository.Add(category);
@@ -44,11 +44,11 @@ public class CategoryController : ControllerBase
 
         if (!result) return Problem(title: "Something went wrong");
 
-        return CreatedAtAction(nameof(GetById), new { category.Id }, category);
+        return CreatedAtAction(nameof(GetBy_Id), new { category.Id }, category);
     }
 
     [HttpGet("{id:Guid}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetBy_Id([FromRoute] Guid id)
     {
         var category = await _categoryRepository.GetById(id);
         if (category == null)
@@ -60,7 +60,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Get_All()
     {
         var AllCategory = await _categoryRepository.GetAll();
 
@@ -92,13 +92,13 @@ public class CategoryController : ControllerBase
     [HttpDelete]
     [Route("{id:Guid}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteById([FromRoute] Guid id)
+    public async Task<IActionResult> DeleteBy_Id([FromRoute] Guid id)
     {
         var category = await _categoryRepository.DeleteById(id);
 
         if(category == null)
         {
-            return null;
+            return NotFound();
         }
         return Ok(_mapper.Map<Category>(category));
 
