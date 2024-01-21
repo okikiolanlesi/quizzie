@@ -11,6 +11,16 @@ export interface RegisterRequestDto {
 
 export interface RegisterResponseDto {
   message: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  token: string;
 }
 
 export interface LoginRequestDto {
@@ -40,9 +50,22 @@ export interface LoginResponseDto {
   };
   token: string;
 }
+export interface EditProfileResponseDto {
+  message: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+}
 type VerifyEmailResponseDto = LoginResponseDto;
 type ForgotPasswordResponseDto = { message: string };
 type ResettPasswordResponseDto = { message: string };
+type ChangePasswordResponseDto = { message: string };
 
 class AuthService {
   static register = async (
@@ -72,10 +95,30 @@ class AuthService {
       email,
     });
   };
+
   static resetPassword = async (
     requestBody: ResetPasswordRequestDto
   ): Promise<AxiosResponse<ResettPasswordResponseDto>> => {
     return await axiosConfig.post("auth/reset-password", requestBody);
+  };
+
+  static editProfile = async ({
+    userId,
+    firstName,
+    lastName,
+  }: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<AxiosResponse<EditProfileResponseDto>> => {
+    return await axiosConfig.put(`user/${userId}`, { firstName, lastName });
+  };
+
+  static changePassword = async (requestBody: {
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<AxiosResponse<ChangePasswordResponseDto>> => {
+    return await axiosConfig.put(`user/change-password`, requestBody);
   };
 }
 

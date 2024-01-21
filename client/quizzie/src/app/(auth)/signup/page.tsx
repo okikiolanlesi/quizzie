@@ -42,21 +42,21 @@ function SignUp() {
 
   useEffect(() => {
     if (signUpMutation.isSuccess) {
-      setShowSuccessModal(true);
+      // setShowSuccessModal(true);
     }
   }, [signUpMutation.isSuccess]);
 
   return (
     <div className="bg-blue min-h-[100vh] overflow-y-scroll scrollbar-thin">
-      <ConfirmModal
+      {/* <ConfirmModal
         title={"You've registered succesfully"}
         paragraph={
           "An email has been sent to you, please check and click the verification link to verify your email. After verifying your email, you can proceed to login"
         }
         onCancel={() => setShowSuccessModal(false)}
-        onContinue={() => router.push("/dashboard")}
+        onContinue={() => router.push("/login")}
         isOpen={showSuccessModal}
-      />
+      /> */}
       <div className="pad-section bg-white rounded-l-2xl  flex justify-center overflow-y-scroll items-center min-h-[100vh]">
         <div className="w-full">
           <h1 className="text-4xl font-bold my-4">Create Account</h1>

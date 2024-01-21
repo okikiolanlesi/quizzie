@@ -18,7 +18,7 @@ export const userRoutes = [
   {
     id: 3,
     label: "Profile",
-    route: "/dashboard",
+    route: "/profile",
     icon: <CgProfile />,
   },
 ];

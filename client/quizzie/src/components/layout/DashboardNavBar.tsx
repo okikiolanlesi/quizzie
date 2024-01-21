@@ -49,7 +49,7 @@ const DashboardNavBar = (props: {
         </div>
 
         <div className="flex w-full justify-end items-center gap-3">
-          <Link href={"/profile"}>
+          <Link href={user?.role === "Admin" ? "/admin/profile" : "/profile"}>
             <CgProfile size={30} />
           </Link>
         </div>

@@ -11,7 +11,9 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const useAuth = () => {
-  const { setUser, setToken, user, token } = useAuthState((state) => state);
+  const { setUser, setToken, user, token, clearAuth } = useAuthState(
+    (state) => state
+  );
   const router = useRouter();
 
   const signUpMutation = useMutation({
@@ -23,8 +25,16 @@ const useAuth = () => {
       toast.error(axiosResponseMessage(error));
     },
     onSuccess: (data) => {
-      const { message } = data;
+      const { message, user, token } = data;
       toast.success(message);
+      setUser(user);
+      setToken(token);
+
+      if (user.role === "Admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     },
   });
 
@@ -102,6 +112,42 @@ const useAuth = () => {
     },
   });
 
+  const editProfileMutation = useMutation({
+    mutationFn: async (params: {
+      userId: string;
+      firstName: string;
+      lastName: string;
+    }) => {
+      const res = await AuthService.editProfile(params);
+      return res?.data;
+    },
+    onError: (error: any) => {
+      toast.error(axiosResponseMessage(error));
+    },
+    onSuccess: (data) => {
+      const { message, user } = data;
+      toast.success(message);
+      setUser(user);
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (params: {
+      oldPassword: string;
+      newPassword: string;
+    }) => {
+      const res = await AuthService.changePassword(params);
+      return res?.data;
+    },
+    onError: (error: any) => {
+      toast.error(axiosResponseMessage(error));
+    },
+    onSuccess: (data) => {
+      const { message } = data;
+      toast.success(message);
+    },
+  });
+
   return {
     signUpMutation,
     loginMutation,
@@ -110,6 +156,8 @@ const useAuth = () => {
     token,
     forgotPasswordMutation,
     resetPasswordMutation,
+    editProfileMutation,
+    changePasswordMutation,
   };
 };
 
