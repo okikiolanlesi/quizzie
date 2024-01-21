@@ -55,19 +55,43 @@ public class AuthController : ControllerBase
             });
         }
 
-        // Map from dto to user model
-        var user = _mapper.Map<User>(registerDto);
+        User user;
+
+        if (isAlreadyExists is null)
+        {
+            // Map from dto to user model
+            user = _mapper.Map<User>(registerDto);
+
+            // Hashing the password before saving in the database
+            user.PasswordHash = HashPassword(registerDto.Password);
+        }
+        else
+        {
+            user = isAlreadyExists;
+        }
+
+        // TODO: Remove this line when I get email to work in  production
+        user.EmailConfirmed = true;
+
 
         // Set email verification data
         var emailVerificationToken = GenerateUniqueToken();
         user.EmailVerificationToken = emailVerificationToken;
         user.EmailVerificationTokenExpiration = DateTime.UtcNow.AddHours(24);
 
-        // Hashing the password before saving in the database
-        user.PasswordHash = HashPassword(registerDto.Password);
 
-        // Saving user
-        _userRepository.Add(user);
+
+        if (isAlreadyExists is null)
+        {
+            // Saving user
+            _userRepository.Add(user);
+        }
+        else
+        {
+            // Modifying user
+            _userRepository.MarkAsModified(user);
+        }
+
 
         // Committing changes
         var result = await _userRepository.SaveChangesAsync();
@@ -94,6 +118,9 @@ public class AuthController : ControllerBase
         return Ok(new
         {
             message = "User registered successfully",
+            token = CreateJwtToken(user),
+            user
+
         });
     }
 
@@ -111,14 +138,6 @@ public class AuthController : ControllerBase
             });
         }
 
-        if (!user.EmailConfirmed)
-        {
-            return BadRequest(new
-            {
-                message = "Email yet to be verified"
-            });
-        }
-
         // Verifying if password provided matches the saved hashed password
         if (!VerifyPassword(loginDto.Password, user.PasswordHash))
         {
@@ -127,6 +146,15 @@ public class AuthController : ControllerBase
                 message = "Invalid credentials"
             });
         };
+
+        // if (!user.EmailConfirmed)
+        // {
+        //     return BadRequest(new
+        //     {
+        //         message = "Email yet to be verified"
+        //     });
+        // }
+
 
         // Creating JWT
         string token = CreateJwtToken(user);

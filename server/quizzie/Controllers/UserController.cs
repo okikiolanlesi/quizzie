@@ -62,7 +62,7 @@ public class UserController : ControllerBase
         var user = await _userRepository.GetById(userId);
 
         // Check if the user exists
-        if(user == null)
+        if (user == null)
         {
             return NotFound(new { message = "User not found" });
         }
@@ -78,14 +78,14 @@ public class UserController : ControllerBase
         var result = await _userRepository.SaveChangesAsync();
 
         // Check if changes were saved successfully
-        if(result == false)
+        if (result == false)
         {
             return Problem("Something went wrong while updating user name");
         }
         return Ok(new
         {
-            message="Profile updated successfully",
-            user
+            message = "Profile updated successfully",
+            user = _mapper.Map<UserDto>(user)
         });
     }
 
@@ -114,13 +114,13 @@ public class UserController : ControllerBase
         var user = await _userRepository.GetById(Guid.Parse(userId));
 
         // Check if the user exists
-        if(user == null)
+        if (user == null)
         {
             return NotFound(new { message = "User not found" });
         }
 
         // Verify the old password
-         if (!BCrypt.Net.BCrypt.Verify(changePasswordDto.OldPassword, user.PasswordHash))
+        if (!BCrypt.Net.BCrypt.Verify(changePasswordDto.OldPassword, user.PasswordHash))
         {
             return BadRequest(new
             {
@@ -141,7 +141,7 @@ public class UserController : ControllerBase
         var result = await _userRepository.SaveChangesAsync();
 
         // Check if changes were saved successfully
-        if(result == false)
+        if (result == false)
         {
             return Problem("Something went wrong while changing password");
         }
