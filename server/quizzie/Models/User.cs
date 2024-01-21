@@ -12,4 +12,9 @@ public class User
     public Role Role { get; set; } = Role.User;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public string ResetToken { get; set; }
+    public DateTime? ResetTokenExpiration { get; set; }
+    public bool EmailConfirmed { get; set; } = false;
+    public string EmailVerificationToken { get; set; }
+    public DateTime? EmailVerificationTokenExpiration { get; set; }
 }

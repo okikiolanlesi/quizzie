@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Quizzie.Data;
@@ -11,9 +12,11 @@ using Quizzie.Data;
 namespace Quizzie.Migrations
 {
     [DbContext(typeof(QuizzieDbContext))]
-    partial class QuizzieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240113082023_ResetPassword")]
+    partial class ResetPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,15 +230,6 @@ namespace Quizzie.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("EmailVerificationToken")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("EmailVerificationTokenExpiration")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");

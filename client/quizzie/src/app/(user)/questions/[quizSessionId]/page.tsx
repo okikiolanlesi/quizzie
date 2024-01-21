@@ -274,7 +274,7 @@ export default function QuizQuestion({
           {/* <DialogTrigger>Open</DialogTrigger> */}
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Here are your quiz results?</DialogTitle>
+              <DialogTitle>Here are your quiz results</DialogTitle>
               <DialogDescription>
                 <p>
                   Total Questions:{" "}
