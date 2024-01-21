@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import useQuiz from "@/hooks/useQuiz";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Markdown from "react-markdown";
+import gfm from "remark-gfm";
 export default function Instruction({
   params,
 }: {
@@ -52,7 +54,11 @@ export default function Instruction({
           {data?.result.questions.length}
         </p>
         <h5 className="font-bold text-xl text-center mt-6">INSTRUCTION</h5>
-        <p className="my-6">{data?.result.instructions}</p>
+        <p className="my-6">
+          <Markdown remarkPlugins={[gfm]} className={"markdown"}>
+            {data?.result.instructions}
+          </Markdown>
+        </p>
         <div className="flex justify-center items-center ">
           <Button
             onClick={() => {

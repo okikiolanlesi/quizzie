@@ -33,7 +33,8 @@ public class DbInitializer
             LastName = "Oga",
             Email = "admin@admin.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("password"),
-            Role = Role.Admin
+            Role = Role.Admin,
+            EmailConfirmed = true
         };
 
         context.Users.Add(admin);
