@@ -18,7 +18,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface IAnswerMap {
@@ -97,7 +96,15 @@ export default function QuizQuestion({
     <>
       <ConfirmModal
         title="Are you sure?"
-        paragraph="Please press continue to submit or cancel to return to your quiz"
+        paragraph={`${
+          getQuizSessionQuery.data?.quiz.questions.length !==
+          getQuizSessionQuery.data?.userAnswers.length
+            ? `You have ${
+                getQuizSessionQuery.data?.quiz.questions.length! -
+                getQuizSessionQuery.data?.userAnswers.length!
+              } unanswered question(s).`
+            : ""
+        } Please press continue to submit or cancel to return to your quiz`}
         onContinue={async () => {
           await SubmitQuizSession.mutateAsync(params.quizSessionId);
           setShowResult(true);

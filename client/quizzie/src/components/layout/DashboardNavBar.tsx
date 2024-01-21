@@ -6,11 +6,13 @@ import { MdLegendToggle } from "react-icons/md";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
 import { CgProfile } from "react-icons/cg";
+import useAuth from "@/hooks/useAuth";
 
 const DashboardNavBar = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
+  const { user } = useAuth();
   return (
     <header className="sticky top-0 z-10 flex w-full bg-white border-b">
       <div className="flex flex-grow items-center justify-between px-4 py-4  md:px-6 2xl:px-11">
@@ -32,7 +34,10 @@ const DashboardNavBar = (props: {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
+          <Link
+            className="block flex-shrink-0 lg:hidden"
+            href={user?.role === "Admin" ? "/admin/dashboard" : "/dashboard"}
+          >
             {/* <Image
               width={32}
               height={32}

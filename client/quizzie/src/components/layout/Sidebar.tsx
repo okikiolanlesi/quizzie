@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import Image from "next/image";
@@ -13,7 +13,6 @@ interface SidebarProps {
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const { user, clearAuth } = useAuthState((state) => state);
-  const pathname = usePathname();
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
@@ -23,7 +22,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
   );
 
-  const links = user?.role === "Admin" ? adminRoutes : userRoutes;
+  const [links, setLinks] = useState<
+    {
+      id: number;
+      label: string;
+      route: string;
+      icon: ReactNode;
+    }[]
+  >([]);
 
   // close on click outside
   useEffect(() => {
@@ -60,6 +66,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   }, [sidebarExpanded]);
 
+  useEffect(() => {
+    setLinks(user?.role === "Admin" ? adminRoutes : userRoutes);
+  }, [user]);
+
   return (
     <aside
       ref={sidebar}
@@ -68,13 +78,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       }`}
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 mt-8">
-        <Link href="/">
-          {/* <Image
-            width={176}
-            height={32}
-            src={"/images/logo/logo.svg"}
-            alt="Logo"
-          /> */}
+        <Link href={user?.role === "Admin" ? "/admin/dashboard" : "/dashboard"}>
           <p className="text-2xl font-bold text-white">Quizzard</p>
         </Link>
 
@@ -107,7 +111,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <h3 className="mb-4 ml-4 text-sm font-semibold text-white">MENU</h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-              {links.map((route) => {
+              {links.map((route: any) => {
                 return (
                   <li key={route.id}>
                     <Link

@@ -2,7 +2,6 @@
 import Loader from "@/components/Loader";
 import { PaginationCustom } from "@/components/Pagination";
 import QuizCard from "@/components/QuizCard";
-import SearchBar from "@/components/SearchBar";
 import WelcomeBanner from "@/components/WelcomeBanner";
 import {
   Select,
@@ -36,7 +35,7 @@ const UserDashboard = () => {
     <div>
       <div className="mb-5">
         <WelcomeBanner
-          title={"Hi " + user?.firstName}
+          title={user?.firstName ? "Hi " + user?.firstName : ""}
           desc=" Embark on a Journey of Knowledge Exploration with Our Extensive
             Collection of Interactive Quizzes."
         />

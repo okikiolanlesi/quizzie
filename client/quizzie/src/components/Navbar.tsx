@@ -6,13 +6,23 @@ function Navbar() {
     <div className=" maxWidthSection text-white sticky py-4 top-0 bg-blue">
       <div className="flex mb-10 justify-between items-center pad-section maxWidthSection">
         <div>
-          <p className="text-2xl font-bold">Quizzard</p>
+          <Link href="/">
+            <p className="text-2xl font-bold">Quizzard</p>
+          </Link>
         </div>
         <div className="hidden sm:block">
           <div className=" flex space-x-4">
-            <p>Home</p>
-            <p>About</p>
-            <p>Contact us</p>
+            <Link href="/">
+              <p>Home</p>
+            </Link>
+
+            <Link href="/about">
+              <p>About</p>
+            </Link>
+
+            <Link href="/contactus">
+              <p>Contact us</p>
+            </Link>
           </div>
         </div>
 
