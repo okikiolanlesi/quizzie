@@ -20,19 +20,29 @@ public class OptionRepository : IOptionRepository
         throw new NotImplementedException();
     }
 
+    public async Task<Option> AddOption(Option option)
+    {
+        await _context.Options.AddAsync(option);
+        await _context.SaveChangesAsync();
+        return option;
+
+    }
+
     public void AddRange(List<Option> options)
     {
         _context.Options.AddRange(options);
     }
+
 
     public Task<List<Option>> GetAllForAQuestion(Guid questionId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Option> GetById(Guid id)
+    public async Task<Option> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Options.FirstAsync(x => x.Id == id);
+
     }
 
     public async Task<Option> GetOptionForQuestionById(Guid optionId, Guid questionId)
@@ -40,9 +50,9 @@ public class OptionRepository : IOptionRepository
         return await _context.Options.FirstOrDefaultAsync(x => x.Id == optionId && x.QuestionId == questionId);
     }
 
-    public void MarkAsModified(Option Option)
+    public void MarkAsModified(Option option)
     {
-        throw new NotImplementedException();
+        _context.Entry(option).State = EntityState.Modified;
     }
 
     public async Task<bool> SaveChangesAsync()

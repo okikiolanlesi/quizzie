@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Quizzie.Data;
+using Quizzie.DTOs;
 using Quizzie.Models;
 
 namespace Quizzie.Repositories;
@@ -11,10 +14,12 @@ namespace Quizzie.Repositories;
 public class QuestionRepository : IQuestionRepository
 {
     private readonly QuizzieDbContext _context;
+    private readonly IMapper _mapper;
 
-    public QuestionRepository(QuizzieDbContext context)
+    public QuestionRepository(QuizzieDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     public void Add(Question question)
     {
@@ -26,9 +31,9 @@ public class QuestionRepository : IQuestionRepository
         throw new NotImplementedException();
     }
 
-    public Task<Question> GetById(Guid id)
+    public async Task<QuestionDto> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Questions.ProjectTo<QuestionDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public void MarkAsModified(Question question)

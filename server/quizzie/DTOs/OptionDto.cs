@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Quizzie.Models;
+using System;
 
-namespace Quizzie.Models
+namespace Quizzie.DTOs
 {
-    public class Option
+    public class OptionDto
     {
         public Guid Id { get; set; }
         public string OptionText { get; set; }
         public bool IsCorrect { get; set; }
-       public bool IsDeleted { get; set; } = false;
-        //Navigation Properties
+        
         public Guid QuestionId { get; set; }
         public Question Question { get; set; }
     }

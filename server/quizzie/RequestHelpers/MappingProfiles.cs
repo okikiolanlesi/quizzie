@@ -55,6 +55,7 @@ namespace Quizzie.RequestHelpers
             CreateMap<CreateOrUpdateOptionDto, Option>().ReverseMap();
             CreateMap<AdminOptionDto, Option>().ReverseMap();
             CreateMap<AdminQuestionDto, Question>().ReverseMap();
+            CreateMap<Option, OptionDto>().ReverseMap();
             CreateMap<QuizSessionAnswerDto, Answer>().ReverseMap();
             CreateMap<QuizSessionOptionDto, Option>().ReverseMap();
             CreateMap<QuizSessionQuestionDto, Question>().ReverseMap();
@@ -66,6 +67,7 @@ namespace Quizzie.RequestHelpers
             CreateMap<Quiz, GetAllQuizDto>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
+
 
 
 
