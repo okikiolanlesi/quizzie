@@ -47,7 +47,7 @@ const AdminDashboard = () => {
                 Edit Profile
               </Button> */}
             <div className="flex gap-4 items-center">
-              <Dialog className="">
+              <Dialog>
                 <DialogTrigger asChild>
                   <Button className="bg-blue font-bold">Edit Profile</Button>
                 </DialogTrigger>
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
                   <DialogHeader>
                     <DialogTitle className="font-bold">Edit profile</DialogTitle>
                     <DialogDescription>
-                      Make changes to your profile here. Click save when you're
+                      Make changes to your profile here. Click save when you&apos;re
                       done.
                     </DialogDescription>
                   </DialogHeader>
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
                   <DialogHeader>
                     <DialogTitle className="font-bold">Change Password</DialogTitle>
                     <DialogDescription>
-                      Make changes to your password here. Click save when you're
+                      Make changes to your password here. Click save when you&apos;re
                       done.
                     </DialogDescription>
                   </DialogHeader>
