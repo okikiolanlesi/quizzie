@@ -1,4 +1,4 @@
-import { FiHome } from "react-icons/fi";
+import { FiHome, FiUsers, FiFolder } from "react-icons/fi";
 import { MdOutlineQuiz } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 
@@ -27,25 +27,31 @@ export const adminRoutes = [
   {
     id: 1,
     label: "Home",
-    route: "/dashboard",
+    route: "/admin/dashboard",
     icon: <FiHome />,
   },
   {
     id: 2,
     label: "Quizzes",
-    route: "/dashboard",
+    route: "/admin/quizzes",
     icon: <MdOutlineQuiz />,
   },
   {
     id: 3,
     label: "Categories",
-    route: "/dashboard",
-    icon: <CgProfile />,
+    route: "/admin/categories",
+    icon: <FiFolder />,
   },
   {
     id: 4,
     label: "Users",
-    route: "/dashboard",
+    route: "/admin/users",
+    icon: <FiUsers />,
+  },
+  {
+    id: 5,
+    label: "Profile",
+    route: "/admin/profile",
     icon: <CgProfile />,
   },
 ];

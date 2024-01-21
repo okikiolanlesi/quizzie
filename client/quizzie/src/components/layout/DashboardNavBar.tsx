@@ -48,7 +48,7 @@ const DashboardNavBar = (props: {
           </Link>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full justify-end items-center gap-3">
           <Link href={"/profile"}>
             <CgProfile size={30} />
           </Link>
