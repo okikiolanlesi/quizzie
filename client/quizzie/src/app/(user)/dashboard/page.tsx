@@ -52,9 +52,12 @@ const UserDashboard = () => {
         />
         <Select onValueChange={(val) => setCategory(val)}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Category" />
+            <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value={undefined!}>
+              All
+            </SelectItem>
             {getCategoriesQuery.data?.map((category) => (
               <SelectItem value={category.id} key={category.id}>
                 {category.title}
