@@ -20,7 +20,7 @@ function Navbar() {
               <p>About</p>
             </Link>
 
-            <Link href="/contactus">
+            <Link href="#">
               <p>Contact us</p>
             </Link>
           </div>

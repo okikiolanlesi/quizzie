@@ -1,18 +1,22 @@
+"use client";
+import { useRouter } from "next/navigation";
+import Navbar from "../../components/Navbar";
+
 export default function About() {
-  //   return <h1>About The Quizze App</h1>;
+  const router = useRouter();
   return (
-    <section className="w-screen mt-10">
+    <section className="w-screen min-h-screen pt-10 text-white bg-blue">
+      <Navbar />
       <div className="flex flex-1 justify-start items-center flex-col gap-6">
-        <h5 className="font-bold text-4xl"> About The Quizze App</h5>
+        <h5 className="font-bold text-4xl"> About The Quizzard App</h5>
         <p className="text-2xl uppercase font-light">
           One stop to put your knowledge to test
         </p>
         <p className="w-3/5 text-center text-2xl">
-          The Quizze App is a web application that allows users (admin) to
+          The Quizzard App is a web application that allows users (admin) to
           create multiple choice questions and share them with others (users) to
           answer. The application is built with React, TypeScript, and Tailwind
-          CSS on the frontend and Node.js, C#, Express, and PostgreSQL on the
-          backend.
+          CSS on the frontend and C#, ASP .Net, and PostgreSQL on the backend.
         </p>
         <div className="flex xs:flex-col md:flex-row justify-center items-center gap-6">
           <img
@@ -31,7 +35,10 @@ export default function About() {
             alt="Img3"
           />
         </div>
-        <button className="border-purple-500 border-2 p-2 rounded-md">
+        <button
+          onClick={() => router.push("/signup")}
+          className="border-purple-500 border-2 p-2 rounded-md mb-10"
+        >
           Get Started
         </button>
       </div>
