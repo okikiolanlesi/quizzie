@@ -236,7 +236,7 @@ public class QuizController : ControllerBase
             System.Console.WriteLine(ongoingSession.Id);
             return BadRequest(new
             {
-                message = "You're already taking this quiz, please finish that one before starting anotehr one"
+                message = "You're already taking this quiz, please finish that one before starting another one"
             });
         }
 

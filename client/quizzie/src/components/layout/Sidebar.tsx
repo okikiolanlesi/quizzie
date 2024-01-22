@@ -14,6 +14,8 @@ interface SidebarProps {
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const { user, clearAuth } = useAuthState((state) => state);
 
+  const pathname = usePathname();
+
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
 
@@ -116,11 +118,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   <li key={route.id}>
                     <Link
                       href={route.route}
-                      className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-white duration-300 ease-in-out hover:underline"
+                      className={`group relative flex items-center gap-2.5 rounded-sm  py-2 px-4 font-medium text-white duration-300 ease-in-out hover:underline"
                       }`}
                     >
                       {route.icon}
-                      {route.label}
+                      <span
+                        className={`${
+                          pathname === route.route
+                            ? "border-b-2 pb-2 border-white "
+                            : null
+                        }`}
+                      >
+                        {route.label}
+                      </span>
                     </Link>
                   </li>
                 );
