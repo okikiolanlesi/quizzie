@@ -1,0 +1,18 @@
+services:
+  quizzie:
+    image: ${DOCKER_REGISTRY-}quizzie
+    build:
+      context: .
+      dockerfile: ./server/quizzie/Dockerfile
+
+  quizziefrontend:
+    image: ${DOCKER_REGISTRY-}quizziefrontend
+    build:
+      context: .
+      dockerfile: ./client/quizzie/Dockerfile
+
+  quizzieDb:
+    image: postgres
+
+volumes:
+  postgres_quizzie:
