@@ -6,8 +6,8 @@ services:
       dockerfile: ./server/quizzie/Dockerfile
 
   quizziefrontend:
-    env_file:
-      - ./client/quizzie/.env
+    # env_file:
+    #   - ./client/quizzie/.env
     image: ${DOCKER_REGISTRY-}quizziefrontend
     build:
       context: .
