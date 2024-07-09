@@ -1,14 +1,15 @@
-import axios from "axios";
+import axios from 'axios';
 
 const axiosConfig = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  // baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  baseURL: 'https://quizzie:9001/api/',
 });
 
 axiosConfig.interceptors.request.use(
   function (config) {
     //Getting the auth token that was persisted by zustand
     let authToken;
-    const authStateString = localStorage.getItem("auth");
+    const authStateString = localStorage.getItem('auth');
     if (authStateString) {
       const authObj = JSON.parse(authStateString);
 
@@ -17,7 +18,7 @@ axiosConfig.interceptors.request.use(
 
     // Only add authToken to headers if it exists
     if (authToken) {
-      config.headers.Authorization = "Bearer " + authToken;
+      config.headers.Authorization = 'Bearer ' + authToken;
     }
 
     return config;
@@ -39,10 +40,10 @@ axiosConfig.interceptors.response.use(
     // Do something with response error
     if (
       error.response.status === 401 ||
-      error.response?.data?.error === "Unauthorized"
+      error.response?.data?.error === 'Unauthorized'
     ) {
       //Getting the auth state that was persisted by zustand and setting its values to undefined to logout the user
-      const authStateString = localStorage.getItem("auth");
+      const authStateString = localStorage.getItem('auth');
       if (authStateString) {
         const authObj = JSON.parse(authStateString);
         if (authObj && authObj.state) {
@@ -52,7 +53,7 @@ axiosConfig.interceptors.response.use(
       }
 
       // Redirect to login page after logging the user out
-      window.location.href = "/login";
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
