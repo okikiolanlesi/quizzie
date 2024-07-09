@@ -13,6 +13,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY client/quizzie ./
 
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_PUBLIC_BACKEND_URL "http://localhost:9000/api/"
+
 
 RUN npm run build
 
