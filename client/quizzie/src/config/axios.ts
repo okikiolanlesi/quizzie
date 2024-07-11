@@ -2,6 +2,7 @@ import axios from "axios";
 
 const axiosConfig = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  // baseURL: 'https://quizzie:9001/api/',
 });
 
 axiosConfig.interceptors.request.use(
