@@ -101,7 +101,7 @@ public class AuthController : ControllerBase
         {
             await _emailService.SendHtmlEmailAsync(user.Email, "Verify your email", "VerifyEmail", new
             {
-                FrontendBaseUrl = _configuration.GetSection("AppSettings:FrontendBaseUrl").Value,
+                FrontendBaseUrl = _configuration["FrontendBaseUrl"],
                 Name = user.FirstName,
                 EmailVerificationToken = emailVerificationToken,
                 UserId = user.Id
@@ -231,7 +231,7 @@ public class AuthController : ControllerBase
         // Send the reset link via email
         _emailService.SendHtmlEmailAsync(user.Email, "Reset Password", "ResetPassword", new
         {
-            FrontendBaseUrl = _configuration.GetSection("AppSettings:FrontendBaseUrl").Value,
+            FrontendBaseUrl = _configuration["FrontendBaseUrl"],
             Name = user.FirstName,
             ResetToken = resetToken
         });
@@ -284,7 +284,7 @@ public class AuthController : ControllerBase
         };
 
         // Creating a new SymmetricKey from Token we have saved in appSettings.development.json file
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token"]));
 
         // Declaring signing credentials
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
