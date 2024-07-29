@@ -16,5 +16,12 @@ services:
   quizzieDb:
     image: postgres
 
+  vault:
+    image: ${DOCKER_REGISTRY-}vault
+    build:
+      context: ./vault
+
 volumes:
   postgres_quizzie:
+  vault-data:
+  vault-config:
