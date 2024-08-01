@@ -26,11 +26,11 @@ using Quizzie.Validators;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
+// var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
 // var vaultToken = builder.Configuration["VAULT_TOKEN"]; // for local development
 
+var vaultUri = Environment.GetEnvironmentVariable("VAULT_ADDR");
 var vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN");
-
 
 var vaultSecretsProvider = new VaultSecretProvider(vaultUri, vaultToken);
 
