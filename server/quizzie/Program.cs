@@ -30,16 +30,19 @@ var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
 var vaultToken = builder.Configuration["VAULT_TOKEN"];
 
 var vaultSecretsProvider = new VaultSecretProvider(vaultUri, vaultToken);
+var secret = vaultSecretsProvider.GetSecretAsync("secret", "quizzie").Result;
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Configuration
-    .AddUserSecrets<Program>(optional: true, reloadOnChange: false)
-    .AddEnvironmentVariables()
-    .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
+// builder.Configuration
+//     .AddUserSecrets<Program>(optional: true, reloadOnChange: false)
+//     .AddEnvironmentVariables()
+//     .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
 
-var defaultConnection = builder.Configuration["DefaultConnection"];
-var token = builder.Configuration["Token"];
+var databaseConnectionString = secret.Data.Data["Database"].ToString();
+var token = secret.Data.Data["Token"].ToString();
+
 
 builder.Services.AddCors(options =>
 {
@@ -113,7 +116,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<QuizzieDbContext>(opt =>
 {
-    opt.UseNpgsql(defaultConnection);
+    opt.UseNpgsql(databaseConnectionString);
 });
 
 builder.Services.AddSingleton<IEmailService>(provider =>
