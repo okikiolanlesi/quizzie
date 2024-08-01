@@ -27,21 +27,23 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
-var vaultToken = builder.Configuration["VAULT_TOKEN"];
+// var vaultToken = builder.Configuration["VAULT_TOKEN"]; // for local development
+
+var vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN");
+
 
 var vaultSecretsProvider = new VaultSecretProvider(vaultUri, vaultToken);
-var secret = vaultSecretsProvider.GetSecretAsync("secret", "quizzie").Result;
-
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-// builder.Configuration
-//     .AddUserSecrets<Program>(optional: true, reloadOnChange: false)
-//     .AddEnvironmentVariables()
-//     .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
+builder.Configuration
+    .AddUserSecrets<Program>(optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables()
+    .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
 
-var databaseConnectionString = Environment.GetEnvironmentVariable("DATABASE");
-var token = Environment.GetEnvironmentVariable("TOKEN");
+var defaultConnection = builder.Configuration["Database"];
+var token = builder.Configuration["Token"];
+
 
 builder.Services.AddCors(options =>
 {
@@ -115,7 +117,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<QuizzieDbContext>(opt =>
 {
-    opt.UseNpgsql(databaseConnectionString);
+    opt.UseNpgsql(defaultConnection);
 });
 
 builder.Services.AddSingleton<IEmailService>(provider =>
