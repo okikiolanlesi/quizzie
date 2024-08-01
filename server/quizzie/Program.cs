@@ -40,9 +40,8 @@ var secret = vaultSecretsProvider.GetSecretAsync("secret", "quizzie").Result;
 //     .AddEnvironmentVariables()
 //     .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
 
-var databaseConnectionString = secret.Data.Data["Database"].ToString();
-var token = secret.Data.Data["Token"].ToString();
-
+var databaseConnectionString = Environment.GetEnvironmentVariable("DATABASE");
+var token = Environment.GetEnvironmentVariable("TOKEN");
 
 builder.Services.AddCors(options =>
 {
