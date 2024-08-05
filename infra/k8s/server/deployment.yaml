@@ -1,26 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: quizzieapp-deployment
-  labels:
-    app: quizzieapp
+  name: quizzie-deployment # Name of the deployment
 spec:
-  automountServiceAccountToken: false
-  replicas: 2
+  replicas: 1 # Number of replicas (instances) of your application
   selector:
     matchLabels:
-      app: quizzieapp
+      app: quizzie
   template:
     metadata:
       labels:
-        app: quizzieapp
+        app: quizzie # Label to identify the application
     spec:
       containers:
-        - name: quizzieapp
-          resources:
-            limits:
-              memory: 512Mi
-              cpu: 500m
-          image: quizzieapp:latest
+        - name: quizzie-container # Name of the container
+          image: richy112/quizzieapp:latest # Docker image to use
           ports:
-            - containerPort: 8080
+            - containerPort: 8080 # Port your application listens on (matches Dockerfile)
+            - containerPort: 8081 # Another port your application listens on (matches Dockerfile)

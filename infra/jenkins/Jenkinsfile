@@ -111,7 +111,7 @@ pipeline {
         stage('Deploy To Kubernetes') {
             steps {
                 // Create service account and deploy to k8s
-
+                kubernetesDeploy(configs: 'infra/k8s/server/deployment.yaml', 'infra/k8s/server/service.yaml')
             }
         }
         
