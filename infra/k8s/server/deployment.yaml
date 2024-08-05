@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quizzieapp-deployment
+  labels:
+    app: quizzieapp
+spec:
+  automountServiceAccountToken: false
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quizzieapp
+  template:
+    metadata:
+      labels:
+        app: quizzieapp
+    spec:
+      containers:
+        - name: quizzieapp
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 500m
+          image: quizzieapp:latest
+          ports:
+            - containerPort: 8080

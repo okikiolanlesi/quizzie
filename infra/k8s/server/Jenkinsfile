@@ -1,0 +1,119 @@
+pipeline {
+    agent any
+
+    environment {
+        SONAR_SCANNER_HOME = tool 'sonar-scanner'
+        VAULT_ADDR = 'http://192.168.40.134:8200'
+        dockerImageName = 'richy112/quizzieapp:latest'
+        dockerImage = ""
+    }
+
+        stages {
+        
+        stage('Git Checkout') {
+            steps {
+                git branch: 'richard-vault-integration', credentialsId: 'git-cred', url: 'https://github.com/The-CodeINN/quizzie.git'
+            }
+        }
+        
+        stage('Restore Packages') {
+            steps {
+                sh 'dotnet restore server/quizzie/quizzie.csproj'
+            }
+        }
+
+        stage('SonarQube Begin Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh '''
+                        export PATH="$PATH:$HOME/.dotnet/tools"
+                        dotnet sonarscanner begin /k:"Quizzie" /n:"Quizzie"
+                    '''
+                }
+            }
+        }
+
+        stage('Build Solution') {
+            steps {
+                sh 'dotnet build server/quizzie/quizzie.csproj --configuration Release'
+            }
+        }
+
+        stage('SonarQube End Analysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh '''
+                        export PATH="$PATH:$HOME/.dotnet/tools"
+                        dotnet sonarscanner end
+                    '''
+                }
+            }
+        }
+
+        stage('File System Scan') {
+            steps {
+                sh "trivy fs --format table -o trivy-fs-report.html server/quizzie"
+            }
+        }
+
+        // stage('SonarQuality Gate') {
+        //     steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'                
+        //         }
+        //     }
+        // }
+
+        stage('Build and Tag Docker Image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                        sh 'docker build -t richy112/quizzieapp:latest -f server/quizzie/Dockerfile .'
+                    }
+                }
+            }
+        }
+
+        stage('Docker Image Scan') {
+            steps {
+                sh "trivy image --format table -o trivy-image-report.html richy112/quizzieapp:latest"
+            }
+        }
+
+        stage('Push Docker Image To Dockerhub') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                       sh 'docker push richy112/quizzieapp:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Cleanup Docker Image') {
+            steps {
+                sh 'docker rmi richy112/quizzieapp:latest'
+            }
+        }
+    
+        stage('')
+        
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'vault-tok', variable: 'VAULT_TOKEN')]) {
+                        sh 'docker run -e VAULT_TOKEN=${VAULT_TOKEN} -e VAULT_ADDR=${VAULT_ADDR} -p 9007:8080 richy112/quizzieapp:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy To Kubernetes') {
+            steps {
+                // Create service account and deploy to k8s
+
+            }
+        }
+        
+    }
+}
