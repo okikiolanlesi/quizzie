@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: ./server/quizzie/Dockerfile
+    networks:
+      - quizzie_network
 
   quizziefrontend:
     # env_file:
@@ -12,9 +14,30 @@ services:
     build:
       context: .
       dockerfile: ./client/quizzie/Dockerfile
+    networks:
+      - quizzie_network
 
   quizzieDb:
     image: postgres
+    environment:
+      POSTGRES_USER: quizzie
+      POSTGRES_PASSWORD: quizzie
+      POSTGRES_DB: quizzie
+    networks:
+      - quizzie_network
+    volumes:
+      - postgres_quizzie:/var/lib/postgresql/data
+  
+  vault:
+    image: ${DOCKER_REGISTRY-}vault
+    build:
+      context: ./vault
+    networks:
+      - quizzie_network
+
+networks:
+  quizzie_network:
+
 
 volumes:
   postgres_quizzie:
