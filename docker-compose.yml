@@ -38,12 +38,6 @@ services:
 networks:
   quizzie_network:
 
-
-  vault:
-    image: ${DOCKER_REGISTRY-}vault
-    build:
-      context: ./vault
-
 volumes:
   postgres_quizzie:
   vault-data:
