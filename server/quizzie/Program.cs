@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Quizzie.Data;
+using Quizzie.Extensions;
 using Quizzie.Repositories;
 using Quizzie.RequestHelpers;
 using Quizzie.Services;
@@ -25,9 +26,25 @@ using Quizzie.Validators;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+// var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
+// var vaultToken = builder.Configuration["VAULT_TOKEN"]; // for local development
+
+var vaultUri = Environment.GetEnvironmentVariable("VAULT_ADDR");
+var vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN");
+
+var vaultSecretsProvider = new VaultSecretProvider(vaultUri, vaultToken);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Configuration
+    .AddUserSecrets<Program>(optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables()
+    .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
+
+var defaultConnection = builder.Configuration["Database"];
+var token = builder.Configuration["Token"];
+
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -63,14 +80,13 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
         options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
     });
 
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
@@ -96,13 +112,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 return;
             }
         };
-
     });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<QuizzieDbContext>(opt =>
 {
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseNpgsql(defaultConnection);
 });
 
 builder.Services.AddSingleton<IEmailService>(provider =>

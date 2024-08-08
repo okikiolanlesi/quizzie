@@ -5,7 +5,7 @@ services:
       POSTGRES_USER: quizzie
       POSTGRES_PASSWORD: quizzie
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_quizzie:/var/lib/postgresql/data
 
@@ -15,20 +15,43 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=Host=quizzieDb;Database=quizzie;Username=quizzie;Password=quizzie;Include Error Detail=true
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=root
     ports:
-      - "9000:8080"
-      - "9001:8081"
+      - '9000:8080'
+      - '9001:8081'
+    depends_on:
+      - quizzieDb
+      - vault
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
   quizziefrontend:
     environment:
-      NEXT_PUBLIC_BACKEND_URL: "https://quizzie:9001/api/"
+      NEXT_PUBLIC_BACKEND_URL: 'https://quizzie:9001/api/'
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - quizzie
     volumes:
       - ${APPDATA}/npm:/home/app/.npm:ro
       - ${APPDATA}/yarn:/home/app/.yarn:ro
+
+  vault:
+    ports:
+      - '8200:8200'
+    volumes:
+      - vault-data:/vault/data
+      - vault-config:/vault/config
+    command: server -config=/vault/config/vault-config.json
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+      - VAULT_API_ADDR=http://127.0.0.1:8200
+    cap_add:
+      - IPC_LOCK
+
+volumes:
+  postgres_quizzie:
+  vault-data:
+  vault-config:
