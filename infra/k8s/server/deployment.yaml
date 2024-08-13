@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quizzie-deployment # Name of the deployment
+spec:
+  replicas: 1 # Number of replicas (instances) of your application
+  selector:
+    matchLabels:
+      app: quizzie
+  template:
+    metadata:
+      labels:
+        app: quizzie # Label to identify the application
+    spec:
+      containers:
+      - name: quizzie-container # Name of the container
+        image: mathildaduku/quizzieapp:latest # Docker image to use
+        ports:
+        - containerPort: 8080 # Port your application listens on
+        env:
+        - name: VAULT_ADDR
+          value: "$VAULT_ADDR"
+        - name: VAULT_TOKEN
+          value: "$VAULT_TOKEN"
+        - name: POSTGRES_USER
+          value: "$POSTGRES_USER"
+        - name: POSTGRES_PASSWORD
+          value: "$POSTGRES_PASSWORD"
+        - name: POSTGRES_DB
+          value: "$POSTGRES_DB"
+        - name: POSTGRES_HOST
+          value: "$POSTGRES_HOST"
+        - name: POSTGRES_PORT
+          value: "$POSTGRES_PORT"

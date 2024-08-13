@@ -26,8 +26,11 @@ using Quizzie.Validators;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
-var vaultToken = builder.Configuration["VAULT_TOKEN"];
+// var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
+// var vaultToken = builder.Configuration["VAULT_TOKEN"]; // for local development
+
+var vaultUri = Environment.GetEnvironmentVariable("VAULT_ADDR");
+var vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN");
 
 var vaultSecretsProvider = new VaultSecretProvider(vaultUri, vaultToken);
 
@@ -38,8 +41,9 @@ builder.Configuration
     .AddEnvironmentVariables()
     .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
 
-var defaultConnection = builder.Configuration["DefaultConnection"];
+var defaultConnection = builder.Configuration["Database"];
 var token = builder.Configuration["Token"];
+
 
 builder.Services.AddCors(options =>
 {
