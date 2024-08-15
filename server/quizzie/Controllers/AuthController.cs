@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Quizzie.DTOs;
 using Quizzie.Models;
 using Quizzie.Repositories;
+using Quizzie.RequestHelpers;
 using Quizzie.Services;
 
 namespace Quizzie.Controllers;
@@ -21,14 +22,14 @@ public class AuthController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    private readonly IConfiguration _configuration;
+    private readonly ISecretsManager _secretsManager;
     private readonly IEmailService _emailService;
 
-    public AuthController(IUserRepository userRepository, IMapper mapper, IConfiguration configuration, IEmailService emailService)
+    public AuthController(IUserRepository userRepository, IMapper mapper, ISecretsManager secretsManager, IEmailService emailService)
     {
         _userRepository = userRepository;
         _mapper = mapper;
-        _configuration = configuration;
+        _secretsManager = secretsManager;
         _emailService = emailService;
     }
 
@@ -101,7 +102,7 @@ public class AuthController : ControllerBase
         {
             await _emailService.SendHtmlEmailAsync(user.Email, "Verify your email", "VerifyEmail", new
             {
-                FrontendBaseUrl = _configuration["FrontendBaseUrl"],
+                FrontendBaseUrl = _secretsManager.GetSecretAsync("FrontendBaseUrl"),
                 Name = user.FirstName,
                 EmailVerificationToken = emailVerificationToken,
                 UserId = user.Id
@@ -157,7 +158,7 @@ public class AuthController : ControllerBase
 
 
         // Creating JWT
-        string token = CreateJwtToken(user);
+        var token = CreateJwtToken(user);
 
         var userdto = _mapper.Map<UserDto>(user);
 
@@ -197,7 +198,7 @@ public class AuthController : ControllerBase
         _userRepository.MarkAsModified(user);
 
         var result = await _userRepository.SaveChangesAsync();
-        if (result == false)
+        if (!result)
         {
             return Problem("Something went wrong");
         }
@@ -223,15 +224,15 @@ public class AuthController : ControllerBase
 
         _userRepository.MarkAsModified(user);
         var result = await _userRepository.SaveChangesAsync();
-        if (result == false)
+        if (!result)
         {
             return Problem("Something went wrong");
         }
 
         // Send the reset link via email
-        _emailService.SendHtmlEmailAsync(user.Email, "Reset Password", "ResetPassword", new
+        _ = _emailService.SendHtmlEmailAsync(user.Email, "Reset Password", "ResetPassword", new
         {
-            FrontendBaseUrl = _configuration["FrontendBaseUrl"],
+            FrontendBaseUrl = _secretsManager.GetSecretAsync("FrontendBaseUrl"),
             Name = user.FirstName,
             ResetToken = resetToken
         });
@@ -261,7 +262,7 @@ public class AuthController : ControllerBase
 
         _userRepository.MarkAsModified(user);
         var result = await _userRepository.SaveChangesAsync();
-        if (result == false)
+        if (!result)
         {
             return Problem("Something went wrong");
         }
@@ -272,7 +273,7 @@ public class AuthController : ControllerBase
         });
     }
 
-    private string CreateJwtToken(User user)
+    private async Task<string> CreateJwtToken(User user)
     {
 
         // Declaring claims we would like to write to the JWT
@@ -284,21 +285,21 @@ public class AuthController : ControllerBase
         };
 
         // Creating a new SymmetricKey from Token we have saved in appSettings.development.json file
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token"]));
+        var token = await _secretsManager.GetSecretAsync("Token");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token));
 
         // Declaring signing credentials
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         // Creating new JWT object
-        var token = new JwtSecurityToken(
+        var jwtToken = new JwtSecurityToken(
             claims: claims,
             expires: DateTime.Now.AddDays(1),
             signingCredentials: creds
         );
 
         // Write JWT to a string
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
+        var jwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
         return jwt;
     }
 
