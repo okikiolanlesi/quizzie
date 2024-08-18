@@ -67,7 +67,7 @@ spec:
           name: prom
         volumeMounts:
         - name: p-config
-          mountPath: /etc/prometheus/
+          mountPath: /etc/prometheus/prometheus.yml
           subPath: prometheus.yml
         - name: prom-vol
           mountPath: /prometheus/data
