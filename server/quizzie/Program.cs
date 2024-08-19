@@ -18,7 +18,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Quizzie.Data;
-using Quizzie.Extensions;
 using Quizzie.Repositories;
 using Quizzie.RequestHelpers;
 using Quizzie.Services;
@@ -26,24 +25,21 @@ using Quizzie.Validators;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-// var vaultUri = builder.Configuration["Vault:VAULT_ADDR"];
-// var vaultToken = builder.Configuration["VAULT_TOKEN"]; // for local development
 
 var vaultUri = Environment.GetEnvironmentVariable("VAULT_ADDR");
 var vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN");
+var vaultMountPoint = "secret";
+var vaultPath = "quizzie";
 
-var vaultSecretsProvider = new VaultSecretProvider(vaultUri, vaultToken);
+
+var secretsManager = new VaultSecretsManager(vaultUri, vaultToken, vaultMountPoint, vaultPath);
+builder.Services.AddSingleton<ISecretsManager>(secretsManager);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Configuration
-    .AddUserSecrets<Program>(optional: true, reloadOnChange: false)
-    .AddEnvironmentVariables()
-    .AddVaultSecrets(vaultSecretsProvider, "quizzie", "secret");
 
-var defaultConnection = builder.Configuration["Database"];
-var token = builder.Configuration["Token"];
-
+var defaultConnection = await secretsManager.GetSecretAsync("Database");
+var token = await secretsManager.GetSecretAsync("Token");
 
 builder.Services.AddCors(options =>
 {
